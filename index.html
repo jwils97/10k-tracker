@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="10K Tracker"><link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V5</title>
+<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V7</title>
 <style>
 :root{--bg:#0b1220;--card:#111827;--card2:#172033;--text:#f8fafc;--muted:#a9b4c7;--accent:#60a5fa;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--border:#263247}
 *{box-sizing:border-box}body{margin:0;background:#0b1220;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
@@ -22,6 +22,8 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calday{aspect-ratio:1/1;background:#111827;border:1px solid var(--border);border-radius:12px;padding:7px;position:relative;min-height:70px}.calday.empty{opacity:.2}.calday.today{outline:2px solid var(--accent)}.calnum{font-size:13px}.dot{height:8px;border-radius:999px;position:absolute;left:7px;right:7px;bottom:7px}.calday.hasWorkout{cursor:pointer}.calday.selected{background:#1a2438}
 .legend{display:flex;gap:10px;flex-wrap:wrap}.legendItem{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}.legendSwatch{width:12px;height:12px;border-radius:3px}
 .barRow{display:grid;grid-template-columns:72px 1fr 62px;gap:8px;align-items:center;margin:9px 0}.barTrack{height:12px;background:#1c2639;border-radius:999px;overflow:hidden}.barFill{height:100%;background:var(--accent);border-radius:999px}.activityRow{padding:11px 0;border-bottom:1px solid var(--border)}.activityRow:last-child{border-bottom:0}.statBig{font-size:23px;font-weight:800;margin-top:4px}
+
+.chatShell{display:flex;flex-direction:column;gap:10px}.chatMessages{display:flex;flex-direction:column;gap:10px;min-height:180px}.chatMsg{max-width:88%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}.chatMsg.user{align-self:flex-end;background:#21416b}.chatMsg.coach{align-self:flex-start;background:var(--card2);border:1px solid var(--border)}.chatComposer{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.chatComposer textarea{min-height:54px;max-height:160px}.quickRow{display:flex;gap:7px;overflow:auto;padding-bottom:2px}.quickRow button{white-space:nowrap;min-height:38px;padding:8px 11px}.proposalCard{border:1px solid #725e1a;background:#26230f}.modalBackdrop{position:fixed;inset:0;z-index:30;background:rgba(2,6,23,.78);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:28px 14px}.modalPanel{width:min(760px,100%);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:16px}.changeItem{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:12px;margin:8px 0}.changeCols{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profileLine{padding:8px 0;border-bottom:1px solid var(--border)}.profileLine:last-child{border-bottom:0}.coachDot{width:9px;height:9px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:6px}.aiDisclaimer{font-size:11px;color:var(--muted);line-height:1.4}@media(max-width:540px){.chatComposer{grid-template-columns:1fr}.chatComposer button{width:100%}.changeCols{grid-template-columns:1fr}.modalBackdrop{padding:12px 8px}}
 @media(max-width:540px){.grid2,.grid3{grid-template-columns:1fr}.calday{min-height:54px;padding:5px}.dot{left:5px;right:5px;bottom:5px}}
 </style></head><body><div class="wrap">
 
@@ -29,7 +31,7 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 <div class="card"><h2>Sign in or create account</h2><label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password"><div class="row" style="margin-top:14px"><button id="login" class="primary">Sign in</button><button id="signup" class="secondary">Create account</button></div><div id="authMsg"></div></div>
 <div class="card hidden" id="profileCard"><h2>Finish setup</h2><label>Your name</label><input id="displayName"><label>Plan start date</label><input id="startDateCreate" type="date"><button id="finishSetup" class="primary" style="width:100%;margin-top:14px">Start training plan</button><div id="profileMsg"></div></div></div>
 
-<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="analytics">Analytics</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTabBtn" class="hidden">Edit Plan</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
+<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="analytics">Analytics</button><button data-tab="coach">Coach</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTabBtn" class="hidden">Edit Plan</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
 
 <section id="todayTab"><h1 id="greeting">10K Tracker</h1><div class="sub">32:00 5K baseline → sub-60:00 10K. Training runs never exceed 6.0 miles.</div><div id="todayCard"></div><div id="todayLog"></div></section>
 
@@ -45,13 +47,32 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 <div class="card"><h2>Recent Activities</h2><div id="recentActivities"></div></div>
 </section>
 
+
+<section id="coachTab" class="hidden">
+  <div class="row space"><div><h1>AI Coach</h1><div class="sub"><span class="coachDot"></span>Uses your training profile, current plan, completed workouts, and synced Strava activity.</div></div><button id="coachProfileBtn" class="secondary">Training Profile</button></div>
+  <div id="coachProposalBanner"></div>
+  <div class="card chatShell">
+    <div id="coachMessages" class="chatMessages"></div>
+    <div class="quickRow">
+      <button class="secondary coachQuick" data-prompt="Help me build or update my training profile. Ask me the questions you need one at a time.">Build my profile</button>
+      <button class="secondary coachQuick" data-prompt="Review my recent training and Strava performance. Tell me whether my upcoming plan should change.">Analyze progress</button>
+      <button class="secondary coachQuick" data-prompt="My current training plan feels too easy. Review the data and propose appropriate changes to my remaining workouts if the evidence supports it.">Plan feels too easy</button>
+      <button class="secondary coachQuick" data-prompt="My current training plan feels too hard. Review the data and propose appropriate changes to my remaining workouts.">Plan feels too hard</button>
+      <button class="secondary coachQuick" data-prompt="I want to build a new training plan for an event. Ask me for the event type, event date, baseline information, goals, schedule, training locations, equipment, and preferences you need before proposing the plan.">Create a new plan</button>
+    </div>
+    <div class="chatComposer"><textarea id="coachInput" placeholder="Talk to your coach…"></textarea><button id="coachSend" class="primary">Send</button></div>
+    <div id="coachStatus"></div>
+    <div class="aiDisclaimer">AI coaching is a planning aid, not medical care. It should not diagnose injuries or override medical advice. Coach-generated plan changes always require your approval before they are applied.</div>
+  </div>
+</section>
+
 <section id="planTab" class="hidden"><h1>Plan</h1><div class="card"><b>Completion</b><div id="progressText" class="small muted"></div><div class="progress" style="margin-top:10px"><div id="progressBar"></div></div></div><div id="planList"></div></section>
 
 <section id="historyTab" class="hidden"><h1>History</h1><div id="historyList"></div></section>
 
 <section id="settingsTab" class="hidden"><h1>Settings</h1>
 <div class="card"><label>Name</label><input id="settingsName"><label>Plan start date</label><input id="settingsStart" type="date"><label>Signed in as</label><input id="settingsEmail" disabled>
-<div class="notice" style="margin-top:14px">Workout content comes from Supabase. Plan edits appear automatically without a GitHub redeploy or re-login.</div>
+<div class="notice" style="margin-top:14px">Your personal plan lives in Supabase. Manual edits save immediately; AI Coach changes require approval first.</div>
 </div>
 <div class="card"><h2>Strava</h2><div id="stravaConnectionStatus" class="sub">Checking connection…</div>
 <div class="row" style="margin-top:14px"><button id="connectStrava" class="primary">Connect Strava</button><button id="syncStrava" class="secondary">Sync Activities</button></div>
@@ -61,7 +82,7 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 </section>
 
 <section id="adminTab" class="hidden"><h1>Edit Training Plan</h1>
-<div class="notice">Pick the date you want to change. Workout colors match the normal calendar. Saved changes appear for everyone automatically.</div>
+<div class="notice">Pick the date you want to change. Workout colors match the normal calendar. Saved manual changes apply immediately to your training plan.</div>
 <div class="card">
   <div class="row space"><button id="adminPrevMonth" class="secondary">‹</button><h2 id="adminMonthTitle" style="margin:0"></h2><button id="adminNextMonth" class="secondary">›</button></div>
   <div id="adminLegend" class="legend" style="margin:12px 0"></div>
@@ -86,16 +107,16 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v5-cache';
+const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v7-cache';
 const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
-let user=null,settings=null,workouts=[],types=[],logs={},viewWorkout=null,calendarCursor=new Date(),selectedCalendarKey=null,adminCalendarCursor=new Date(),adminSelectedKey=null,stravaActivities=[];
+let user=null,settings=null,workouts=[],types=[],logs={},viewWorkout=null,calendarCursor=new Date(),selectedCalendarKey=null,adminCalendarCursor=new Date(),adminSelectedKey=null,stravaActivities=[],coachMessages=[],trainingProfile=null,currentProposal=null;
 let cache=JSON.parse(localStorage.getItem(CACHE)||'null')||{settings:null,workouts:[],types:[],logs:{},dirty:{}};
 const $=x=>document.getElementById(x),saveCache=()=>localStorage.setItem(CACHE,JSON.stringify({settings,workouts,types,logs,dirty:cache.dirty||{}}));
 const msg=(el,t,c='notice')=>el.innerHTML=t?`<div class="${c}">${t}</div>`:'';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const parseDate=s=>{let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const fmt=d=>d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-const workoutDate=w=>{let d=parseDate(settings.start_date);d.setDate(d.getDate()+(w.week-1)*7+w.day-1);return d};
+const workoutDate=w=>w.scheduled_date?parseDate(w.scheduled_date):(()=>{let d=parseDate(settings.start_date);d.setDate(d.getDate()+(w.week-1)*7+w.day-1);return d})();
 const colorFor=w=>types.find(t=>t.name===w.category)?.color_hex||'#64748B';
 const ownLog=w=>logs[w.workout_key]||{user_id:user.id,workout_key:w.workout_key,completed:false,duration:'',weight_log:'',notes:'',photo_path:null,workout_snapshot:null};
 function badge(t,ok=true){$('syncBadge').textContent=t;$('syncBadge').className='pill '+(ok?'sync':'offline')}
@@ -108,20 +129,25 @@ async function afterAuth(){
   let s=await client.from('user_settings').select('*').eq('user_id',user.id).maybeSingle();
   if(s.error)return msg($('authMsg'),s.error.message,'error');
   if(!s.data){$('profileCard').classList.remove('hidden');$('startDateCreate').value=new Date().toISOString().slice(0,10);return}
-  settings=s.data;await loadAll();enterApp();
+  settings=s.data;await ensurePersonalPlan();await loadAll();enterApp();
 }
 
 $('finishSetup').onclick=async()=>{
   let name=$('displayName').value.trim(),start=$('startDateCreate').value;if(!name||!start)return msg($('profileMsg'),'Enter name and start date.','error');
   let r=await client.from('user_settings').insert({user_id:user.id,display_name:name,start_date:start}).select().single();
-  if(r.error)return msg($('profileMsg'),r.error.message,'error');settings=r.data;await loadAll();enterApp();
+  if(r.error)return msg($('profileMsg'),r.error.message,'error');settings=r.data;await ensurePersonalPlan();await loadAll();enterApp();
 };
+
+async function ensurePersonalPlan(){
+  let r=await client.rpc('ensure_user_plan');
+  if(r.error)console.warn('ensure_user_plan:',r.error.message);
+}
 
 async function loadAll(){
   badge('Syncing…');
   try{
     let [wr,tr,lr]=await Promise.all([
-      client.from('plan_workouts').select('*').eq('active',true).order('week').order('day'),
+      client.from('user_plan_workouts').select('*').eq('user_id',user.id).eq('active',true).order('scheduled_date').order('week').order('day'),
       client.from('workout_types').select('*').order('sort_order'),
       client.from('workout_logs').select('*').eq('user_id',user.id)
     ]);
@@ -139,13 +165,14 @@ function enterApp(){
   $('greeting').textContent=`${settings.display_name}'s 10K Tracker`;
   if(settings.is_admin){$('adminTabBtn').classList.remove('hidden');buildAdmin()}
   calendarCursor=new Date();adminCalendarCursor=new Date();
-  render();loadStravaStatus();loadAnalytics();subscribe();
+  render();loadStravaStatus();loadAnalytics();loadCoachState();subscribe();
 }
 
 function todayWorkout(){
   if(!workouts.length)return null;
-  let a=parseDate(settings.start_date),t=new Date();t.setHours(0,0,0,0),i=Math.floor((t-a)/86400000);
-  return workouts.find(w=>(w.week-1)*7+(w.day-1)===Math.max(0,Math.min(workouts.length-1,i)))||workouts[0];
+  let t=new Date();t.setHours(0,0,0,0);
+  let exact=workouts.find(w=>workoutDate(w).getTime()===t.getTime());if(exact)return exact;
+  return workouts.find(w=>workoutDate(w)>=t)||workouts[workouts.length-1];
 }
 
 function workoutCardHTML(w,compact=false){
@@ -159,7 +186,7 @@ function workoutCardHTML(w,compact=false){
 
 function renderToday(w=todayWorkout()){viewWorkout=w;$('todayCard').innerHTML=workoutCardHTML(w);if(w)renderLog(w)}
 
-function currentSnapshot(w){return {workout_key:w.workout_key,revision:w.revision,title:w.title,category:w.category,location:w.location,scheme:w.scheme,distance:w.distance,effort:w.effort,estimate:w.estimate,cardio:w.cardio,week:w.week,day:w.day}}
+function currentSnapshot(w){return {workout_key:w.workout_key,revision:w.revision,title:w.title,category:w.category,location:w.location,scheme:w.scheme,distance:w.distance,effort:w.effort,estimate:w.estimate,cardio:w.cardio,week:w.week,day:w.day,scheduled_date:w.scheduled_date||null}}
 
 async function persist(w,l){
   logs[w.workout_key]=l;cache.dirty[w.workout_key]=true;saveCache();
@@ -337,21 +364,95 @@ function loadAdminForm(w){
 $('saveWorkout').onclick=async()=>{
   let key=adminSelectedKey,w=workouts.find(x=>x.workout_key===key);if(!w)return msg($('adminMsg'),'Select a workout date first.','error');
   let patch={title:$('aTitle').value.trim(),category:$('aCategory').value,location:$('aLocation').value.trim(),distance:$('aDistance').value.trim(),estimate:$('aEstimate').value.trim(),effort:$('aEffort').value.trim(),scheme:$('aScheme').value.trim(),cardio:$('aCardio').value==='true',revision:(w.revision||1)+1,updated_at:new Date().toISOString()};
-  let r=await client.from('plan_workouts').update(patch).eq('workout_key',key).select().single();
+  let r=await client.from('user_plan_workouts').update(patch).eq('user_id',user.id).eq('workout_key',key).select().single();
   if(r.error)return msg($('adminMsg'),r.error.message,'error');
-  msg($('adminMsg'),'Workout updated. Everyone will see the change automatically.','success');await loadAll();render();buildAdmin();loadAdminForm(workouts.find(x=>x.workout_key===key));
+  msg($('adminMsg'),'Workout updated immediately.','success');await loadAll();render();buildAdmin();loadAdminForm(workouts.find(x=>x.workout_key===key));
+};
+
+
+async function loadCoachState(){
+  try{
+    let [pr,mr,pp]=await Promise.all([
+      client.from('training_profiles').select('*').eq('user_id',user.id).maybeSingle(),
+      client.from('coach_messages').select('*').eq('user_id',user.id).order('created_at',{ascending:true}).limit(80),
+      client.from('coach_proposals').select('*').eq('user_id',user.id).eq('status','pending').order('created_at',{ascending:false}).limit(1).maybeSingle()
+    ]);
+    trainingProfile=pr.data?.profile_json||null;coachMessages=mr.data||[];currentProposal=pp.data||null;renderCoach();
+    if(currentProposal)await loadProposal(currentProposal.id,false);
+  }catch(e){console.warn('Coach state:',e)}
+}
+function renderCoach(){
+  let mount=$('coachMessages');if(!mount)return;
+  let msgs=coachMessages;
+  if(!msgs.length)mount.innerHTML='<div class="chatMsg coach">Hi — I’m your training coach. I can build your training profile, help create a plan around your real training setup, and use your completed workouts plus Strava data to recommend changes. I’ll never change the plan without showing you a confirmation first.</div>';
+  else mount.innerHTML=msgs.map(m=>`<div class="chatMsg ${m.role==='user'?'user':'coach'}">${esc(m.content)}</div>`).join('');
+  $('coachProposalBanner').innerHTML=currentProposal?`<div class="card proposalCard"><div class="row space"><div><b>Plan changes waiting for approval</b><div class="small muted">${esc(currentProposal.title||'Coach proposal')}</div></div><button id="reviewPendingProposal" class="primary">Review Changes</button></div></div>`:'';
+  let rb=$('reviewPendingProposal');if(rb)rb.onclick=()=>loadProposal(currentProposal.id,true);
+}
+async function sendCoach(text){
+  text=(text||'').trim();if(!text)return;
+  $('coachInput').value='';$('coachSend').disabled=true;msg($('coachStatus'),'Coach is reviewing your data…');
+  coachMessages.push({role:'user',content:text,created_at:new Date().toISOString()});renderCoach();
+  try{
+    let data=await invokeFn('coach-chat',{message:text});
+    if(data?.message)coachMessages.push({role:'assistant',content:data.message,created_at:new Date().toISOString()});
+    if(data?.profile)trainingProfile=data.profile;
+    if(data?.proposal_id){currentProposal={id:data.proposal_id,title:data.proposal_title||'Coach proposal',status:'pending'};await loadProposal(data.proposal_id,true)}
+    await loadCoachState();msg($('coachStatus'),'');
+  }catch(e){msg($('coachStatus'),e.message||String(e),'error');await loadCoachState()}
+  finally{$('coachSend').disabled=false}
+}
+$('coachSend').onclick=()=>sendCoach($('coachInput').value);
+$('coachInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendCoach($('coachInput').value)}});
+document.querySelectorAll('.coachQuick').forEach(b=>b.onclick=()=>sendCoach(b.dataset.prompt));
+
+function renderProfile(){
+  let p=trainingProfile||{};
+  let rows=[['Profile summary',p.profile_summary],['Event', [p.event_type,p.event_date,p.goal].filter(Boolean).join(' • ')],['Baseline',p.baseline],['Schedule',p.schedule],['Training locations',(p.locations||[]).join(' • ')],['Equipment',(p.equipment||[]).join(', ')],['Preferences',(p.preferences||[]).join(' • ')],['Constraints',(p.constraints||[]).join(' • ')]];
+  $('profileView').innerHTML=rows.map(([k,v])=>`<div class="profileLine"><div class="small muted">${esc(k)}</div><div>${esc(v||'Not established yet')}</div></div>`).join('');
+}
+$('coachProfileBtn').onclick=()=>{renderProfile();$('profileModal').classList.remove('hidden')};
+$('profileClose').onclick=()=>$('profileModal').classList.add('hidden');
+$('profileUpdateCoach').onclick=()=>{$('profileModal').classList.add('hidden');sendCoach('Help me update my training profile. Tell me what you currently know, then ask me the most important missing or outdated question one at a time.')};
+
+async function loadProposal(id,open=true){
+  let [p,items]=await Promise.all([
+    client.from('coach_proposals').select('*').eq('id',id).eq('user_id',user.id).single(),
+    client.from('coach_proposal_items').select('*').eq('proposal_id',id).eq('user_id',user.id).order('sort_order')
+  ]);
+  if(p.error||items.error)return msg($('coachStatus'),(p.error||items.error).message,'error');
+  currentProposal={...p.data,items:items.data||[]};renderCoach();if(open)openProposalModal();
+}
+function describeWorkout(w){if(!w)return 'No workout';return `${w.title||'Workout'} • ${w.category||''} • ${w.distance||''} • ${w.estimate||''}`}
+function openProposalModal(){
+  if(!currentProposal)return;
+  $('proposalTitle').textContent=currentProposal.title||'Confirm changes to training plan';$('proposalRationale').textContent=currentProposal.rationale||'';
+  let s=currentProposal.summary_json||[];$('proposalSummary').innerHTML=`<h2>High-level summary</h2>${(Array.isArray(s)?s:[]).map(x=>`<div style="margin:7px 0">• ${esc(x)}</div>`).join('')||'<div class="muted">Review the proposed workout changes below.</div>'}`;
+  $('proposalDetails').innerHTML=(currentProposal.items||[]).map(i=>{let b=i.before_snapshot,a=i.after_snapshot;return `<div class="changeItem"><div class="row space"><b>${esc((a||b)?.scheduled_date||i.workout_key)}</b><span class="pill">${esc(i.action)}</span></div><div class="changeCols"><div><div class="small muted">Current</div><div>${esc(describeWorkout(b))}</div></div><div><div class="small muted">Proposed</div><div>${esc(describeWorkout(a))}</div></div></div></div>`}).join('');
+  $('proposalDetails').classList.add('hidden');$('proposalDetailsToggle').textContent='Review workout-by-workout details';$('proposalModal').classList.remove('hidden');
+}
+$('proposalClose').onclick=()=>$('proposalModal').classList.add('hidden');
+$('proposalDetailsToggle').onclick=()=>{let d=$('proposalDetails'),hidden=d.classList.toggle('hidden');$('proposalDetailsToggle').textContent=hidden?'Review workout-by-workout details':'Hide workout-by-workout details'};
+$('proposalApply').onclick=async()=>{
+  if(!currentProposal)return;$('proposalApply').disabled=true;msg($('proposalActionMsg'),'Applying approved changes…');
+  try{let d=await invokeFn('coach-apply',{proposal_id:currentProposal.id});msg($('proposalActionMsg'),`Applied ${d?.applied??0} changes.`,'success');$('proposalModal').classList.add('hidden');currentProposal=null;let sr=await client.from('user_settings').select('*').eq('user_id',user.id).single();if(sr.data){settings=sr.data;$('settingsStart').value=settings.start_date}await loadAll();render();await loadCoachState()}
+  catch(e){msg($('proposalActionMsg'),e.message||String(e),'error')}finally{$('proposalApply').disabled=false}
+};
+$('proposalCancel').onclick=async()=>{
+  if(!currentProposal)return;let r=await client.from('coach_proposals').update({status:'rejected',resolved_at:new Date().toISOString()}).eq('id',currentProposal.id).eq('user_id',user.id);if(r.error)return msg($('proposalActionMsg'),r.error.message,'error');$('proposalModal').classList.add('hidden');currentProposal=null;await loadCoachState();
 };
 
 async function updateSettings(){
   let name=$('settingsName').value.trim(),start=$('settingsStart').value;if(!name||!start)return;
-  let r=await client.from('user_settings').update({display_name:name,start_date:start,updated_at:new Date().toISOString()}).eq('user_id',user.id).select().single();
-  if(!r.error){settings=r.data;$('greeting').textContent=`${name}'s 10K Tracker`;saveCache();render()}
+  if(start!==settings.start_date){let sh=await client.rpc('shift_user_plan_start',{new_start:start});if(sh.error)return alert(sh.error.message)}
+  let r=await client.from('user_settings').update({display_name:name,updated_at:new Date().toISOString()}).eq('user_id',user.id).select().single();
+  if(!r.error){settings=r.data;await loadAll();$('greeting').textContent=`${name}'s 10K Tracker`;saveCache();render()}
 }
 $('settingsName').onchange=updateSettings;$('settingsStart').onchange=updateSettings;$('syncNow').onclick=async()=>{await loadAll();render()};$('signOut').onclick=async()=>{await client.auth.signOut();location.reload()};
-$('exportAll').onclick=()=>{let data={version:5,exported_at:new Date().toISOString(),settings,workout_types:types,plan_workouts:workouts,workout_logs:Object.values(logs)};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='10k-tracker-v5-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$('exportAll').onclick=()=>{let data={version:7,exported_at:new Date().toISOString(),settings,workout_types:types,user_plan_workouts:workouts,workout_logs:Object.values(logs)};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='10k-tracker-v7-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 
 function render(){renderToday(viewWorkout||todayWorkout());renderCalendar();renderPlan();renderHistory();if(settings?.is_admin)renderAdminCalendar();saveCache()}
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','analytics','plan','history','settings','admin'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='analytics')loadAnalytics();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='admin'&&settings.is_admin)buildAdmin()});
-function subscribe(){client.channel('v5-plan').on('postgres_changes',{event:'*',schema:'public',table:'plan_workouts'},async()=>{await loadAll();render();if(settings.is_admin)buildAdmin()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_types'},async()=>{await loadAll();render()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render()}).subscribe()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','analytics','coach','plan','history','settings','admin'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='analytics')loadAnalytics();if(b.dataset.tab==='coach')renderCoach();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='admin'&&settings.is_admin)buildAdmin()});
+function subscribe(){client.channel('v7-plan').on('postgres_changes',{event:'*',schema:'public',table:'user_plan_workouts',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render();if(settings.is_admin)buildAdmin()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_types'},async()=>{await loadAll();render()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render()}).subscribe()}
 window.addEventListener('online',async()=>{await loadAll();render()});window.addEventListener('offline',()=>badge('Offline cache',false));if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});checkSession();
 </script></body></html>
