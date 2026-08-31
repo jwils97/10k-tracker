@@ -105,6 +105,28 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 
 </div></div>
 
+
+<!-- V7.1 Coach modals -->
+<div id="profileModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+  <div class="modalPanel">
+    <div class="row space"><h1 id="profileModalTitle" style="margin:0">Training Profile</h1><button id="profileClose" class="secondary">Close</button></div>
+    <div id="profileView" class="card" style="margin-top:14px"></div>
+    <button id="profileUpdateCoach" class="primary" style="width:100%">Update profile with Coach</button>
+  </div>
+</div>
+
+<div id="proposalModal" class="modalBackdrop hidden" role="dialog" aria-modal="true" aria-labelledby="proposalTitle">
+  <div class="modalPanel">
+    <div class="row space"><h1 id="proposalTitle" style="margin:0">Confirm changes to training plan</h1><button id="proposalClose" class="secondary">Close</button></div>
+    <div id="proposalRationale" class="sub" style="margin-top:10px"></div>
+    <div id="proposalSummary" class="card" style="margin-top:14px"></div>
+    <button id="proposalDetailsToggle" class="secondary" style="width:100%;margin-top:10px">Review workout-by-workout details</button>
+    <div id="proposalDetails" class="hidden" style="margin-top:10px"></div>
+    <div class="row" style="margin-top:14px"><button id="proposalCancel" class="danger">Reject Changes</button><button id="proposalApply" class="primary">Apply Changes</button></div>
+    <div id="proposalActionMsg" style="margin-top:10px"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v7-cache';
