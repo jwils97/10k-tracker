@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="10K Tracker"><link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V6</title>
+<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V5</title>
 <style>
 :root{--bg:#0b1220;--card:#111827;--card2:#172033;--text:#f8fafc;--muted:#a9b4c7;--accent:#60a5fa;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--border:#263247}
 *{box-sizing:border-box}body{margin:0;background:#0b1220;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
@@ -24,11 +24,11 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 @media(max-width:540px){.grid2,.grid3{grid-template-columns:1fr}.calday{min-height:54px;padding:5px}.dot{left:5px;right:5px;bottom:5px}}
 </style></head><body><div class="wrap">
 
-<div id="authGate"><h1>10K Tracker</h1><div class="sub">Cloud training plan • calendar • editable workouts</div>
+<div id="authGate"><h1>10K Tracker</h1><div class="sub">Cloud training plan • calendar • personal history</div>
 <div class="card"><h2>Sign in or create account</h2><label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password"><div class="row" style="margin-top:14px"><button id="login" class="primary">Sign in</button><button id="signup" class="secondary">Create account</button></div><div id="authMsg"></div></div>
 <div class="card hidden" id="profileCard"><h2>Finish setup</h2><label>Your name</label><input id="displayName"><label>Plan start date</label><input id="startDateCreate" type="date"><button id="finishSetup" class="primary" style="width:100%;margin-top:14px">Start training plan</button><div id="profileMsg"></div></div></div>
 
-<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="edit">Edit Workout</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
+<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTabBtn" class="hidden">Edit Plan</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
 
 <section id="todayTab"><h1 id="greeting">10K Tracker</h1><div class="sub">32:00 5K baseline → sub-60:00 10K. Training runs never exceed 6.0 miles.</div><div id="todayCard"></div><div id="todayLog"></div></section>
 
@@ -40,25 +40,13 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 
 <section id="settingsTab" class="hidden"><h1>Settings</h1><div class="card"><label>Name</label><input id="settingsName"><label>Plan start date</label><input id="settingsStart" type="date"><label>Signed in as</label><input id="settingsEmail" disabled><div class="notice" style="margin-top:14px">Workout content now comes from Supabase. Plan edits appear automatically without a GitHub redeploy or re-login. Your own history stays tied to your account.</div><div class="row" style="margin-top:14px"><button id="syncNow" class="secondary">Sync now</button><button id="exportAll" class="secondary">Export Full Backup</button><button id="signOut" class="danger">Sign out</button></div></div></section>
 
-<section id="editTab" class="hidden"><h1>Edit Workout</h1>
-<div class="notice">Anyone signed in can edit a workout until they personally mark that workout complete. After you complete it, your copy is locked to preserve your history.</div>
-<div class="card">
-<label>Select workout</label><select id="editWorkout"></select>
-<div id="editLockMsg" class="small muted" style="margin-top:8px"></div>
-<div class="grid2">
-<div><label>Title</label><input id="eTitle"><label>Category</label><select id="eCategory"></select><label>Location</label><input id="eLocation"><label>Distance</label><input id="eDistance"></div>
-<div><label>Estimated time</label><input id="eEstimate"><label>Effort</label><textarea id="eEffort"></textarea><label>Cardio / time-based</label><select id="eCardio"><option value="true">Yes</option><option value="false">No</option></select></div>
-</div>
-<label>Sets / reps / structure</label><textarea id="eScheme"></textarea>
-<button id="saveWorkout" class="primary" style="width:100%;margin-top:14px">Save workout update</button>
-<div id="editMsg"></div>
-</div></section>
+<section id="adminTab" class="hidden"><h1>Edit Training Plan</h1><div class="notice">Only admin accounts can edit the shared plan. Existing completed-workout history keeps a snapshot of the workout as it was when completed.</div><div class="card"><label>Select workout</label><select id="adminWorkout"></select><div class="grid2"><div><label>Title</label><input id="aTitle"><label>Category</label><select id="aCategory"></select><label>Location</label><input id="aLocation"><label>Distance</label><input id="aDistance"></div><div><label>Estimated time</label><input id="aEstimate"><label>Effort</label><textarea id="aEffort"></textarea><label>Cardio / time-based</label><select id="aCardio"><option value="true">Yes</option><option value="false">No</option></select></div></div><label>Sets / reps / structure</label><textarea id="aScheme"></textarea><button id="saveWorkout" class="primary" style="width:100%;margin-top:14px">Save workout update</button><div id="adminMsg"></div></div></section>
 
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v6-cache';
+const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v5-cache';
 const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 let user=null,settings=null,workouts=[],types=[],logs={},viewWorkout=null,calendarCursor=new Date(),selectedCalendarKey=null;
 let cache=JSON.parse(localStorage.getItem(CACHE)||'null')||{settings:null,workouts:[],types:[],logs:{},dirty:{}};
@@ -109,7 +97,7 @@ function enterApp(){
   $('authGate').classList.add('hidden');$('app').classList.remove('hidden');
   $('settingsName').value=settings.display_name;$('settingsStart').value=settings.start_date;$('settingsEmail').value=user.email;
   $('greeting').textContent=`${settings.display_name}'s 10K Tracker`;
-  buildEditor()
+  if(settings.is_admin){$('adminTabBtn').classList.remove('hidden');buildAdmin()}
   calendarCursor=new Date();
   render();subscribe();
 }
@@ -194,28 +182,19 @@ function renderCalendar(){
 $('prevMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);selectedCalendarKey=null;$('calendarDetail').innerHTML='';renderCalendar()};
 $('nextMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);selectedCalendarKey=null;$('calendarDetail').innerHTML='';renderCalendar()};
 
-function buildEditor(){
-  $('editWorkout').innerHTML=workouts.map(w=>`<option value="${w.workout_key}">W${w.week}D${w.day} — ${esc(w.title)}</option>`).join('');
-  $('eCategory').innerHTML=types.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
-  loadEditForm();
-  $('editWorkout').onchange=loadEditForm;
+function buildAdmin(){
+  $('adminWorkout').innerHTML=workouts.map(w=>`<option value="${w.workout_key}">W${w.week}D${w.day} — ${esc(w.title)}</option>`).join('');
+  $('aCategory').innerHTML=types.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+  loadAdminForm();
+  $('adminWorkout').onchange=loadAdminForm;
 }
-function loadEditForm(){
-  let w=workouts.find(x=>x.workout_key===$('editWorkout').value)||workouts[0];if(!w)return;
-  let locked=!!ownLog(w).completed;
-  $('eTitle').value=w.title;$('eCategory').value=w.category;$('eLocation').value=w.location;$('eDistance').value=w.distance;
-  $('eEstimate').value=w.estimate;$('eEffort').value=w.effort;$('eCardio').value=String(w.cardio);$('eScheme').value=w.scheme;
-  ['eTitle','eCategory','eLocation','eDistance','eEstimate','eEffort','eCardio','eScheme','saveWorkout'].forEach(id=>$(id).disabled=locked);
-  $('editLockMsg').textContent=locked?'Locked for you because you already completed this workout.':'Editable until you mark this workout complete.';
+function loadAdminForm(){
+  let w=workouts.find(x=>x.workout_key===$('adminWorkout').value)||workouts[0];if(!w)return;
+  $('aTitle').value=w.title;$('aCategory').value=w.category;$('aLocation').value=w.location;$('aDistance').value=w.distance;$('aEstimate').value=w.estimate;$('aEffort').value=w.effort;$('aCardio').value=String(w.cardio);$('aScheme').value=w.scheme;
 }
 $('saveWorkout').onclick=async()=>{
-  let key=$('editWorkout').value,w=workouts.find(x=>x.workout_key===key);if(!w)return;
-  if(ownLog(w).completed)return msg($('editMsg'),'This workout is locked because you already completed it.','error');
-  let patch={title:$('eTitle').value.trim(),category:$('eCategory').value,location:$('eLocation').value.trim(),distance:$('eDistance').value.trim(),estimate:$('eEstimate').value.trim(),effort:$('eEffort').value.trim(),scheme:$('eScheme').value.trim(),cardio:$('eCardio').value==='true',revision:(w.revision||1)+1,updated_at:new Date().toISOString()};
-  let r=await client.from('plan_workouts').update(patch).eq('workout_key',key).select().single();
-  if(r.error)return msg($('editMsg'),r.error.message,'error');
-  msg($('editMsg'),'Workout updated. The change is live for everyone.','success');await loadAll();render();buildEditor();
-};
+  let key=$('adminWorkout').value,w=workouts.find(x=>x.workout_key===key);if(!w)return;
+  let patch={title:$('aTitle').value.trim(),category:$('aCategory').value,location:$('aLocation').value.trim(),distance:$('aDistance').value.trim(),estimate:$('aEstimate').value.trim(),effort:$('aEffort').value.trim(),scheme:$('aScheme').value.trim(),cardio:$('aCardio').value==='true',revision:(w.revision||1)+1,updated_at:new Date().toISOString()};
   let r=await client.from('plan_workouts').update(patch).eq('workout_key',key).select().single();
   if(r.error)return msg($('adminMsg'),r.error.message,'error');
   msg($('adminMsg'),'Workout updated. Everyone will see the change automatically.','success');await loadAll();render();buildAdmin();
@@ -230,7 +209,7 @@ $('settingsName').onchange=updateSettings;$('settingsStart').onchange=updateSett
 $('exportAll').onclick=()=>{let data={version:5,exported_at:new Date().toISOString(),settings,workout_types:types,plan_workouts:workouts,workout_logs:Object.values(logs)};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='10k-tracker-v5-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 
 function render(){renderToday(viewWorkout||todayWorkout());renderCalendar();renderPlan();renderHistory();saveCache()}
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','plan','history','settings','edit'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='edit')buildEditor()});
-function subscribe(){client.channel('v5-plan').on('postgres_changes',{event:'*',schema:'public',table:'plan_workouts'},async()=>{await loadAll();render();buildEditor()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_types'},async()=>{await loadAll();render()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render()}).subscribe()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','plan','history','settings','admin'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='admin'&&settings.is_admin)buildAdmin()});
+function subscribe(){client.channel('v5-plan').on('postgres_changes',{event:'*',schema:'public',table:'plan_workouts'},async()=>{await loadAll();render();if(settings.is_admin)buildAdmin()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_types'},async()=>{await loadAll();render()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render()}).subscribe()}
 window.addEventListener('online',async()=>{await loadAll();render()});window.addEventListener('offline',()=>badge('Offline cache',false));if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});checkSession();
 </script></body></html>
