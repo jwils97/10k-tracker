@@ -1,22 +1,26 @@
-# 10K Workout Tracker V3
+# 10K Workout Tracker V6
 
-V3 adds separate Jonathan/Nicole accounts, a shared training team, durable Supabase cloud storage, private photo storage, offline caching/queued writes, realtime synchronization, and a full JSON backup export.
+V6 removes the admin concept entirely.
 
-Swimming has been completely removed from the 10-week plan. Those days were replaced with easy cycling, walking, mobility, and core work.
+## Editing behavior
+- Any signed-in user can edit the shared workout plan.
+- A workout is editable for you until you personally mark it complete.
+- Once you complete a workout, the editor locks that workout for your account.
+- Your completed workout snapshot remains preserved in your history.
+- Other users who have not completed that workout can still edit the shared plan.
 
-## Setup
-1. Run SUPABASE_SETUP_V3.sql in the Supabase SQL Editor.
-2. Replace your GitHub Pages repository files with the V3 files.
-3. Open the PWA and enter the Project URL plus publishable/anon key.
-4. Jonathan creates his own account and then creates the training team.
-5. Copy the 8-character join code from Settings.
-6. Nicole creates her own account and joins with that code.
-7. Each person now records only their own completion/results, while both can see the team's records.
+## Calendar
+Workout-type colors remain consistent across workout cards and the calendar:
+- Run: blue
+- Strength: red
+- Bike: green
+- Recovery: purple
+- Race: amber
 
-## Data durability
-Supabase Postgres is the main source of truth. Each phone also has a local cache and queues workout changes made while offline. Use Export Full Backup periodically to download a JSON copy of team settings, members, all workout logs, and the complete plan.
+## Upgrade
+1. Run `SUPABASE_SETUP_V6.sql` in Supabase SQL Editor.
+2. Replace the GitHub Pages files with the V6 files.
+3. Commit to `main`.
+4. Reload the app.
 
-Workout images remain in the private Supabase Storage bucket; the backup contains their storage paths, not duplicate image bytes.
-
-## Security
-The SQL enables Row Level Security. Team members can read shared team information. Each authenticated user can write only their own workout log rows. Photos are private and scoped by team ID and user ID. Never put a service-role key in the browser app.
+After that, workout edits happen inside the app without GitHub redeploys.
