@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="10K Tracker"><link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V5</title>
+<style>
+:root{--bg:#0b1220;--card:#111827;--card2:#172033;--text:#f8fafc;--muted:#a9b4c7;--accent:#60a5fa;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--border:#263247}
+*{box-sizing:border-box}body{margin:0;background:#0b1220;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:860px;margin:auto;padding:18px 16px 90px}h1{font-size:28px;margin:8px 0 4px}h2{font-size:19px;margin:0 0 12px}h3{margin:0;font-size:18px}
+.sub,.muted{color:var(--muted)}.sub{font-size:14px;line-height:1.45}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:14px 0;overflow:hidden}
+.ribbon{height:7px;margin:-16px -16px 14px}.hero{background:linear-gradient(135deg,#172033,#0f1a2d)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{background:var(--card2);border-radius:13px;padding:11px}.metric b{display:block;font-size:15px;margin-top:4px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}input,textarea,select,button{font:inherit}input,textarea,select{width:100%;border:1px solid var(--border);border-radius:12px;background:#0c1424;color:var(--text);padding:12px;min-height:44px;font-size:16px}textarea{min-height:78px}
+button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight:700}.primary{background:var(--accent);color:#06111f}.secondary{background:#22304a;color:var(--text);border:1px solid var(--border)}.done{background:var(--ok);color:#052016}.danger{background:#3b1720;color:#fecdd3}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#1f2a40;color:#d9e5f5}.sync{background:#123628;color:#a7f3d0}.offline{background:#452a12;color:#fde68a}
+.photo{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(--border)}.hidden{display:none!important}
+.topbar{position:sticky;top:0;z-index:4;background:rgba(11,18,32,.94);backdrop-filter:blur(12px);padding:10px 0;border-bottom:1px solid var(--border)}.tabs{display:flex;gap:7px;overflow:auto}.tabs button{white-space:nowrap;background:#152035;color:#cbd5e1;padding:8px 12px;min-height:38px}.tabs button.active{background:var(--accent);color:#06111f}
+.day{border-left:4px solid #334155}.day.complete{border-left-color:var(--ok)}.progress{height:10px;background:#1c2639;border-radius:999px;overflow:hidden}.progress>div{height:100%;background:var(--ok)}
+.notice{background:#1b273c;border-left:4px solid var(--warn);padding:12px;border-radius:10px;font-size:13px}.error{background:#3b1720;border-left:4px solid var(--bad);padding:12px;border-radius:10px;color:#fecdd3;font-size:13px}.success{background:#123628;border-left:4px solid var(--ok);padding:12px;border-radius:10px;color:#d1fae5;font-size:13px}.small{font-size:12px}
+.calendarHead{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:5px}.calendarHead div{text-align:center;font-size:12px;color:var(--muted)}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calday{aspect-ratio:1/1;background:#111827;border:1px solid var(--border);border-radius:12px;padding:7px;position:relative;min-height:70px}.calday.empty{opacity:.2}.calday.today{outline:2px solid var(--accent)}.calnum{font-size:13px}.dot{height:8px;border-radius:999px;position:absolute;left:7px;right:7px;bottom:7px}.calday.hasWorkout{cursor:pointer}.calday.selected{background:#1a2438}
+.legend{display:flex;gap:10px;flex-wrap:wrap}.legendItem{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}.legendSwatch{width:12px;height:12px;border-radius:3px}
+@media(max-width:540px){.grid2,.grid3{grid-template-columns:1fr}.calday{min-height:54px;padding:5px}.dot{left:5px;right:5px;bottom:5px}}
+</style></head><body><div class="wrap">
+
+<div id="authGate"><h1>10K Tracker</h1><div class="sub">Cloud training plan • calendar • personal history</div>
+<div class="card"><h2>Sign in or create account</h2><label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password"><div class="row" style="margin-top:14px"><button id="login" class="primary">Sign in</button><button id="signup" class="secondary">Create account</button></div><div id="authMsg"></div></div>
+<div class="card hidden" id="profileCard"><h2>Finish setup</h2><label>Your name</label><input id="displayName"><label>Plan start date</label><input id="startDateCreate" type="date"><button id="finishSetup" class="primary" style="width:100%;margin-top:14px">Start training plan</button><div id="profileMsg"></div></div></div>
+
+<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTabBtn" class="hidden">Edit Plan</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
+
+<section id="todayTab"><h1 id="greeting">10K Tracker</h1><div class="sub">32:00 5K baseline → sub-60:00 10K. Training runs never exceed 6.0 miles.</div><div id="todayCard"></div><div id="todayLog"></div></section>
+
+<section id="calendarTab" class="hidden"><h1>Calendar</h1><div class="card"><div class="row space"><button id="prevMonth" class="secondary">‹</button><h2 id="monthTitle" style="margin:0"></h2><button id="nextMonth" class="secondary">›</button></div><div id="legend" class="legend" style="margin:12px 0"></div><div class="calendarHead"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div><div id="calendarGrid" class="calendar"></div></div><div id="calendarDetail"></div></section>
+
+<section id="planTab" class="hidden"><h1>Plan</h1><div class="card"><b>Completion</b><div id="progressText" class="small muted"></div><div class="progress" style="margin-top:10px"><div id="progressBar"></div></div></div><div id="planList"></div></section>
+
+<section id="historyTab" class="hidden"><h1>History</h1><div id="historyList"></div></section>
+
+<section id="settingsTab" class="hidden"><h1>Settings</h1><div class="card"><label>Name</label><input id="settingsName"><label>Plan start date</label><input id="settingsStart" type="date"><label>Signed in as</label><input id="settingsEmail" disabled><div class="notice" style="margin-top:14px">Workout content now comes from Supabase. Plan edits appear automatically without a GitHub redeploy or re-login. Your own history stays tied to your account.</div><div class="row" style="margin-top:14px"><button id="syncNow" class="secondary">Sync now</button><button id="exportAll" class="secondary">Export Full Backup</button><button id="signOut" class="danger">Sign out</button></div></div></section>
+
+<section id="adminTab" class="hidden"><h1>Edit Training Plan</h1><div class="notice">Only admin accounts can edit the shared plan. Existing completed-workout history keeps a snapshot of the workout as it was when completed.</div><div class="card"><label>Select workout</label><select id="adminWorkout"></select><div class="grid2"><div><label>Title</label><input id="aTitle"><label>Category</label><select id="aCategory"></select><label>Location</label><input id="aLocation"><label>Distance</label><input id="aDistance"></div><div><label>Estimated time</label><input id="aEstimate"><label>Effort</label><textarea id="aEffort"></textarea><label>Cardio / time-based</label><select id="aCardio"><option value="true">Yes</option><option value="false">No</option></select></div></div><label>Sets / reps / structure</label><textarea id="aScheme"></textarea><button id="saveWorkout" class="primary" style="width:100%;margin-top:14px">Save workout update</button><div id="adminMsg"></div></div></section>
+
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v5-cache';
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+let user=null,settings=null,workouts=[],types=[],logs={},viewWorkout=null,calendarCursor=new Date(),selectedCalendarKey=null;
+let cache=JSON.parse(localStorage.getItem(CACHE)||'null')||{settings:null,workouts:[],types:[],logs:{},dirty:{}};
+const $=x=>document.getElementById(x),saveCache=()=>localStorage.setItem(CACHE,JSON.stringify({settings,workouts,types,logs,dirty:cache.dirty||{}}));
+const msg=(el,t,c='notice')=>el.innerHTML=t?`<div class="${c}">${t}</div>`:'';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const parseDate=s=>{let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const fmt=d=>d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+const workoutDate=w=>{let d=parseDate(settings.start_date);d.setDate(d.getDate()+(w.week-1)*7+w.day-1);return d};
+const colorFor=w=>types.find(t=>t.name===w.category)?.color_hex||'#64748B';
+const ownLog=w=>logs[w.workout_key]||{user_id:user.id,workout_key:w.workout_key,completed:false,duration:'',weight_log:'',notes:'',photo_path:null,workout_snapshot:null};
+function badge(t,ok=true){$('syncBadge').textContent=t;$('syncBadge').className='pill '+(ok?'sync':'offline')}
+
+$('login').onclick=async()=>{let r=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(r.error)return msg($('authMsg'),r.error.message,'error');user=r.data.user;afterAuth()};
+$('signup').onclick=async()=>{let r=await client.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(r.error)return msg($('authMsg'),r.error.message,'error');if(r.data.session){user=r.data.user;afterAuth()}else msg($('authMsg'),'Account created. Confirm email, then sign in.','success')};
+async function checkSession(){let r=await client.auth.getSession();if(r.data.session){user=r.data.session.user;afterAuth()}}
+
+async function afterAuth(){
+  let s=await client.from('user_settings').select('*').eq('user_id',user.id).maybeSingle();
+  if(s.error)return msg($('authMsg'),s.error.message,'error');
+  if(!s.data){$('profileCard').classList.remove('hidden');$('startDateCreate').value=new Date().toISOString().slice(0,10);return}
+  settings=s.data;await loadAll();enterApp();
+}
+
+$('finishSetup').onclick=async()=>{
+  let name=$('displayName').value.trim(),start=$('startDateCreate').value;if(!name||!start)return msg($('profileMsg'),'Enter name and start date.','error');
+  let r=await client.from('user_settings').insert({user_id:user.id,display_name:name,start_date:start}).select().single();
+  if(r.error)return msg($('profileMsg'),r.error.message,'error');settings=r.data;await loadAll();enterApp();
+};
+
+async function loadAll(){
+  badge('Syncing…');
+  try{
+    let [wr,tr,lr]=await Promise.all([
+      client.from('plan_workouts').select('*').eq('active',true).order('week').order('day'),
+      client.from('workout_types').select('*').order('sort_order'),
+      client.from('workout_logs').select('*').eq('user_id',user.id)
+    ]);
+    if(wr.error||tr.error||lr.error)throw(wr.error||tr.error||lr.error);
+    workouts=wr.data||[];types=tr.data||[];logs={};(lr.data||[]).forEach(x=>logs[x.workout_key]=x);
+    saveCache();badge('Synced');
+  }catch(e){
+    console.error(e);workouts=cache.workouts||[];types=cache.types||[];logs=cache.logs||{};settings=cache.settings||settings;badge('Offline cache',false);
+  }
+}
+
+function enterApp(){
+  $('authGate').classList.add('hidden');$('app').classList.remove('hidden');
+  $('settingsName').value=settings.display_name;$('settingsStart').value=settings.start_date;$('settingsEmail').value=user.email;
+  $('greeting').textContent=`${settings.display_name}'s 10K Tracker`;
+  if(settings.is_admin){$('adminTabBtn').classList.remove('hidden');buildAdmin()}
+  calendarCursor=new Date();
+  render();subscribe();
+}
+
+function todayWorkout(){
+  if(!workouts.length)return null;
+  let a=parseDate(settings.start_date),t=new Date();t.setHours(0,0,0,0),i=Math.floor((t-a)/86400000);
+  return workouts.find(w=>(w.week-1)*7+(w.day-1)===Math.max(0,Math.min(workouts.length-1,i)))||workouts[0];
+}
+
+function workoutCardHTML(w,compact=false){
+  if(!w)return '<div class="card">No workout found.</div>';
+  let c=colorFor(w);
+  return `<div class="card ${compact?'':'hero'}"><div class="ribbon" style="background:${c}"></div>
+    <div class="row space"><div><span class="pill">Week ${w.week} • Day ${w.day} • ${fmt(workoutDate(w))}</span><h2 style="margin-top:10px">${esc(w.title)}</h2></div><span class="pill">${esc(w.category)}</span></div>
+    <div class="grid3"><div class="metric">Location<b>${esc(w.location)}</b></div><div class="metric">Distance<b>${esc(w.distance)}</b></div><div class="metric">Estimate<b>${esc(w.estimate)}</b></div></div>
+    <label>Structure</label><div class="sub">${esc(w.scheme)}</div><label>Effort target</label><div class="sub">${esc(w.effort)}</div></div>`;
+}
+
+function renderToday(w=todayWorkout()){viewWorkout=w;$('todayCard').innerHTML=workoutCardHTML(w);if(w)renderLog(w)}
+
+function currentSnapshot(w){return {workout_key:w.workout_key,revision:w.revision,title:w.title,category:w.category,location:w.location,scheme:w.scheme,distance:w.distance,effort:w.effort,estimate:w.estimate,cardio:w.cardio,week:w.week,day:w.day}}
+
+async function persist(w,l){
+  logs[w.workout_key]=l;cache.dirty[w.workout_key]=true;saveCache();
+  if(!navigator.onLine){badge('Offline • queued',false);return}
+  badge('Saving…');
+  let row={user_id:user.id,workout_key:w.workout_key,completed:!!l.completed,duration:l.duration||null,weight_log:l.weight_log||null,notes:l.notes||null,photo_path:l.photo_path||null,workout_snapshot:l.workout_snapshot||null,updated_at:new Date().toISOString()};
+  let r=await client.from('workout_logs').upsert(row,{onConflict:'user_id,workout_key'});
+  if(!r.error){delete cache.dirty[w.workout_key];saveCache();badge('Synced')}else badge('Queued',false);
+}
+
+function renderLog(w){
+  let l=ownLog(w),mount=$('todayLog');
+  mount.innerHTML=`<div class="card"><div class="ribbon" style="background:${colorFor(w)}"></div><h2>Your workout entry</h2>
+  <button id="completeBtn" class="${l.completed?'done':'secondary'}" style="width:100%">${l.completed?'✓ Completed':'Mark workout complete'}</button>
+  ${w.cardio?`<label>Total duration</label><input id="duration" value="${esc(l.duration||'')}" placeholder="e.g. 47:32">`:`<label>Weight recordings</label><textarea id="weights">${esc(l.weight_log||'')}</textarea>`}
+  <label>Notes</label><textarea id="notes">${esc(l.notes||'')}</textarea><label>Workout image</label><input id="photo" type="file" accept="image/*"><img id="myPhoto" class="photo hidden">`;
+  $('completeBtn').onclick=()=>{l.completed=!l.completed;if(l.completed&&!l.workout_snapshot)l.workout_snapshot=currentSnapshot(w);persist(w,l);renderLog(w)};
+  if(w.cardio)$('duration').onchange=e=>{l.duration=e.target.value;persist(w,l)};else $('weights').onchange=e=>{l.weight_log=e.target.value;persist(w,l)};
+  $('notes').onchange=e=>{l.notes=e.target.value;persist(w,l)};$('photo').onchange=e=>e.target.files[0]&&uploadPhoto(w,l,e.target.files[0]);if(l.photo_path)photoUrl(l.photo_path,$('myPhoto'));
+}
+
+async function uploadPhoto(w,l,file){
+  if(file.size>8*1024*1024)return alert('Please choose an image under 8 MB.');
+  let ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase(),path=`${user.id}/${w.workout_key}.${ext}`;
+  let r=await client.storage.from('workout-photos').upload(path,file,{upsert:true,contentType:file.type});if(r.error)return alert(r.error.message);l.photo_path=path;await persist(w,l);renderLog(w)
+}
+async function photoUrl(path,img){let r=await client.storage.from('workout-photos').createSignedUrl(path,3600);if(!r.error){img.src=r.data.signedUrl;img.classList.remove('hidden')}}
+
+function renderPlan(){
+  let mount=$('planList');mount.innerHTML='';
+  for(let n=1;n<=10;n++){let h=document.createElement('h2');h.textContent=`Week ${n}`;h.style.marginTop='22px';mount.appendChild(h);
+    workouts.filter(w=>w.week===n).forEach(w=>{let l=ownLog(w),c=document.createElement('div');c.innerHTML=workoutCardHTML(w,true);c.firstElementChild.classList.toggle('complete',!!l.completed);c.onclick=()=>{document.querySelector('[data-tab="today"]').click();renderToday(w);window.scrollTo({top:0,behavior:'smooth'})};mount.appendChild(c)})
+  }
+  let done=workouts.filter(w=>ownLog(w).completed).length;$('progressText').textContent=`${done} of ${workouts.length} workouts completed`;$('progressBar').style.width=`${workouts.length?done/workouts.length*100:0}%`;
+}
+
+function renderHistory(){
+  let mount=$('historyList');mount.innerHTML='';
+  let used=workouts.filter(w=>{let l=ownLog(w);return l.completed||l.duration||l.weight_log||l.notes||l.photo_path}).reverse();
+  if(!used.length){mount.innerHTML='<div class="card muted">No history yet.</div>';return}
+  used.forEach(w=>{let l=ownLog(w),snap=l.workout_snapshot||currentSnapshot(w),c=document.createElement('div');c.className='card';c.innerHTML=`<div class="ribbon" style="background:${types.find(t=>t.name===snap.category)?.color_hex||colorFor(w)}"></div><div class="row space"><h3>${esc(snap.title)}</h3><span class="pill">${esc(snap.category)}</span></div><div class="small muted">${fmt(workoutDate(w))}</div><div class="small" style="margin-top:7px"><b>Status:</b> ${l.completed?'✓ Complete':'Not complete'}</div>${l.duration?`<div class="small"><b>Duration:</b> ${esc(l.duration)}</div>`:''}${l.weight_log?`<div class="small"><b>Weights:</b> ${esc(l.weight_log)}</div>`:''}${l.notes?`<div class="small"><b>Notes:</b> ${esc(l.notes)}</div>`:''}<img class="photo hidden">`;mount.appendChild(c);if(l.photo_path)photoUrl(l.photo_path,c.querySelector('img'))})
+}
+
+function renderCalendar(){
+  $('monthTitle').textContent=calendarCursor.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  $('legend').innerHTML=types.map(t=>`<div class="legendItem"><span class="legendSwatch" style="background:${t.color_hex}"></span>${esc(t.name)}</div>`).join('');
+  let y=calendarCursor.getFullYear(),m=calendarCursor.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),grid=$('calendarGrid');grid.innerHTML='';
+  for(let i=0;i<first.getDay();i++){let d=document.createElement('div');d.className='calday empty';grid.appendChild(d)}
+  let today=new Date();today.setHours(0,0,0,0);
+  for(let day=1;day<=last.getDate();day++){
+    let date=new Date(y,m,day),w=workouts.find(x=>{let wd=workoutDate(x);return wd.getFullYear()===y&&wd.getMonth()===m&&wd.getDate()===day});
+    let d=document.createElement('div');d.className='calday'+(w?' hasWorkout':'')+(date.getTime()===today.getTime()?' today':'')+(w&&w.workout_key===selectedCalendarKey?' selected':'');
+    d.innerHTML=`<div class="calnum">${day}</div>${w?`<div class="dot" style="background:${colorFor(w)}"></div>`:''}`;
+    if(w)d.onclick=()=>{selectedCalendarKey=w.workout_key;renderCalendar();$('calendarDetail').innerHTML=workoutCardHTML(w);$('calendarDetail').onclick=()=>{document.querySelector('[data-tab="today"]').click();renderToday(w)}};
+    grid.appendChild(d);
+  }
+  if(selectedCalendarKey){let w=workouts.find(x=>x.workout_key===selectedCalendarKey);if(w)$('calendarDetail').innerHTML=workoutCardHTML(w)}
+}
+
+$('prevMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);selectedCalendarKey=null;$('calendarDetail').innerHTML='';renderCalendar()};
+$('nextMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);selectedCalendarKey=null;$('calendarDetail').innerHTML='';renderCalendar()};
+
+function buildAdmin(){
+  $('adminWorkout').innerHTML=workouts.map(w=>`<option value="${w.workout_key}">W${w.week}D${w.day} — ${esc(w.title)}</option>`).join('');
+  $('aCategory').innerHTML=types.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+  loadAdminForm();
+  $('adminWorkout').onchange=loadAdminForm;
+}
+function loadAdminForm(){
+  let w=workouts.find(x=>x.workout_key===$('adminWorkout').value)||workouts[0];if(!w)return;
+  $('aTitle').value=w.title;$('aCategory').value=w.category;$('aLocation').value=w.location;$('aDistance').value=w.distance;$('aEstimate').value=w.estimate;$('aEffort').value=w.effort;$('aCardio').value=String(w.cardio);$('aScheme').value=w.scheme;
+}
+$('saveWorkout').onclick=async()=>{
+  let key=$('adminWorkout').value,w=workouts.find(x=>x.workout_key===key);if(!w)return;
+  let patch={title:$('aTitle').value.trim(),category:$('aCategory').value,location:$('aLocation').value.trim(),distance:$('aDistance').value.trim(),estimate:$('aEstimate').value.trim(),effort:$('aEffort').value.trim(),scheme:$('aScheme').value.trim(),cardio:$('aCardio').value==='true',revision:(w.revision||1)+1,updated_at:new Date().toISOString()};
+  let r=await client.from('plan_workouts').update(patch).eq('workout_key',key).select().single();
+  if(r.error)return msg($('adminMsg'),r.error.message,'error');
+  msg($('adminMsg'),'Workout updated. Everyone will see the change automatically.','success');await loadAll();render();buildAdmin();
+};
+
+async function updateSettings(){
+  let name=$('settingsName').value.trim(),start=$('settingsStart').value;if(!name||!start)return;
+  let r=await client.from('user_settings').update({display_name:name,start_date:start,updated_at:new Date().toISOString()}).eq('user_id',user.id).select().single();
+  if(!r.error){settings=r.data;$('greeting').textContent=`${name}'s 10K Tracker`;saveCache();render()}
+}
+$('settingsName').onchange=updateSettings;$('settingsStart').onchange=updateSettings;$('syncNow').onclick=async()=>{await loadAll();render()};$('signOut').onclick=async()=>{await client.auth.signOut();location.reload()};
+$('exportAll').onclick=()=>{let data={version:5,exported_at:new Date().toISOString(),settings,workout_types:types,plan_workouts:workouts,workout_logs:Object.values(logs)};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='10k-tracker-v5-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+
+function render(){renderToday(viewWorkout||todayWorkout());renderCalendar();renderPlan();renderHistory();saveCache()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','plan','history','settings','admin'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='admin'&&settings.is_admin)buildAdmin()});
+function subscribe(){client.channel('v5-plan').on('postgres_changes',{event:'*',schema:'public',table:'plan_workouts'},async()=>{await loadAll();render();if(settings.is_admin)buildAdmin()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_types'},async()=>{await loadAll();render()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render()}).subscribe()}
+window.addEventListener('online',async()=>{await loadAll();render()});window.addEventListener('offline',()=>badge('Offline cache',false));if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});checkSession();
+</script></body></html>
