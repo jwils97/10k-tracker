@@ -1,39 +1,74 @@
-# 10K Workout Tracker V5
+# 10K Workout Tracker V6
 
-V5 separates app code from workout content.
+V6 adds:
+- Strava connection from Settings
+- Personal Strava analytics
+- Calendar-based workout editing for admins
+- Existing cloud plan + individual workout history
 
-## What changes
-- The 70-workout plan now lives in Supabase (`plan_workouts`) instead of `index.html`.
-- Updating a workout no longer requires a GitHub Pages deployment.
-- Users do not need to log out or back in after plan edits.
-- Realtime subscription refreshes plan changes automatically.
-- Calendar tab shows future workouts by date.
-- Each workout type has a persistent color:
-  - Run: blue
-  - Strength: red
-  - Bike: green
-  - Recovery: purple
-  - Race: amber
-- The same color appears as a ribbon on workout cards and as a bar/dot in the calendar.
-- Tap a calendar date to preview the workout, then tap the workout card to open/log it.
-- Admin accounts get an in-app Edit Plan tab.
-- Completed workouts save a snapshot of the workout definition so later plan edits do not rewrite historical workout details.
+## One-time V6 database setup
+Run `SUPABASE_SETUP_V6.sql` in Supabase SQL Editor after V5 is already installed.
 
-## One-time upgrade
-1. Run `SUPABASE_SETUP_V5.sql` in the existing Supabase project's SQL Editor.
-2. Replace the GitHub Pages repository files with the V5 files and commit to `main`.
-3. Sign in normally.
-4. After your account exists, make your account an admin once with this SQL:
-   update public.user_settings
-   set is_admin = true
-   where user_id = (select id from auth.users where email = 'YOUR_EMAIL_HERE');
-5. Reload the app once. You will now see the Edit Plan tab.
+## Create a Strava API application
+Create an app at Strava's API settings page.
 
-After this one V5 deployment, workout changes can be made from Edit Plan without redeploying GitHub Pages.
+Set the Strava Authorization Callback Domain to:
+`ewfsszhehargnzherokw.supabase.co`
 
-## Data model
-- `workout_types`: type name + color
-- `plan_workouts`: shared current plan content
-- `user_settings`: each user's name/start date/admin flag
-- `workout_logs`: personal completion/results/history
-- `workout_snapshot`: immutable copy of a workout saved when it is first marked complete
+You need:
+- Client ID
+- Client Secret
+
+Never put the Client Secret in index.html.
+
+## Edge Function secrets
+Set these Supabase Edge Function secrets:
+- STRAVA_CLIENT_ID = your Strava Client ID
+- STRAVA_CLIENT_SECRET = your Strava Client Secret
+- APP_URL = your GitHub Pages app URL, including trailing slash if that is your normal app URL
+
+SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are available to deployed Supabase Edge Functions.
+
+## Deploy Edge Functions
+This package includes:
+- `supabase/functions/strava-connect`
+- `supabase/functions/strava-callback`
+- `supabase/functions/strava-sync`
+
+The callback must be deployed without JWT verification because Strava itself redirects the browser to it after authorization.
+`supabase/config.toml` contains that setting.
+
+Using Supabase CLI:
+1. `supabase login`
+2. `supabase link --project-ref ewfsszhehargnzherokw`
+3. `supabase secrets set STRAVA_CLIENT_ID=... STRAVA_CLIENT_SECRET=... APP_URL=https://YOUR_GITHUB_PAGES_URL/`
+4. `supabase functions deploy strava-connect`
+5. `supabase functions deploy strava-callback --no-verify-jwt`
+6. `supabase functions deploy strava-sync`
+
+## GitHub Pages
+Replace the existing GitHub Pages files with the V6 files once and commit to main.
+
+## Using Strava
+Each user:
+1. Opens Settings
+2. Taps Connect Strava
+3. Authorizes Strava
+4. Returns to the app
+5. Taps Sync Activities
+6. Opens Analytics
+
+The sync imports up to the last 180 days of activities. Tokens are refreshed server-side.
+
+## Analytics currently included
+- Running miles over the last 6 months
+- Average running pace
+- Plan completion percentage
+- Cycling miles
+- Number of Strava runs
+- Number of imported activities
+- 8-week running mileage bars
+- 10 most recent activities
+
+## Admin editor
+Edit Plan now opens a calendar instead of a Week/Day dropdown. Choose a date, edit that workout, and save.

@@ -21,6 +21,7 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 .calendarHead{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:5px}.calendarHead div{text-align:center;font-size:12px;color:var(--muted)}
 .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calday{aspect-ratio:1/1;background:#111827;border:1px solid var(--border);border-radius:12px;padding:7px;position:relative;min-height:70px}.calday.empty{opacity:.2}.calday.today{outline:2px solid var(--accent)}.calnum{font-size:13px}.dot{height:8px;border-radius:999px;position:absolute;left:7px;right:7px;bottom:7px}.calday.hasWorkout{cursor:pointer}.calday.selected{background:#1a2438}
 .legend{display:flex;gap:10px;flex-wrap:wrap}.legendItem{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}.legendSwatch{width:12px;height:12px;border-radius:3px}
+.barRow{display:grid;grid-template-columns:72px 1fr 62px;gap:8px;align-items:center;margin:9px 0}.barTrack{height:12px;background:#1c2639;border-radius:999px;overflow:hidden}.barFill{height:100%;background:var(--accent);border-radius:999px}.activityRow{padding:11px 0;border-bottom:1px solid var(--border)}.activityRow:last-child{border-bottom:0}.statBig{font-size:23px;font-weight:800;margin-top:4px}
 @media(max-width:540px){.grid2,.grid3{grid-template-columns:1fr}.calday{min-height:54px;padding:5px}.dot{left:5px;right:5px;bottom:5px}}
 </style></head><body><div class="wrap">
 
@@ -28,19 +29,58 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 <div class="card"><h2>Sign in or create account</h2><label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password"><div class="row" style="margin-top:14px"><button id="login" class="primary">Sign in</button><button id="signup" class="secondary">Create account</button></div><div id="authMsg"></div></div>
 <div class="card hidden" id="profileCard"><h2>Finish setup</h2><label>Your name</label><input id="displayName"><label>Plan start date</label><input id="startDateCreate" type="date"><button id="finishSetup" class="primary" style="width:100%;margin-top:14px">Start training plan</button><div id="profileMsg"></div></div></div>
 
-<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTabBtn" class="hidden">Edit Plan</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
+<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="calendar">Calendar</button><button data-tab="analytics">Analytics</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTabBtn" class="hidden">Edit Plan</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
 
 <section id="todayTab"><h1 id="greeting">10K Tracker</h1><div class="sub">32:00 5K baseline → sub-60:00 10K. Training runs never exceed 6.0 miles.</div><div id="todayCard"></div><div id="todayLog"></div></section>
 
 <section id="calendarTab" class="hidden"><h1>Calendar</h1><div class="card"><div class="row space"><button id="prevMonth" class="secondary">‹</button><h2 id="monthTitle" style="margin:0"></h2><button id="nextMonth" class="secondary">›</button></div><div id="legend" class="legend" style="margin:12px 0"></div><div class="calendarHead"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div><div id="calendarGrid" class="calendar"></div></div><div id="calendarDetail"></div></section>
 
+
+<section id="analyticsTab" class="hidden">
+<h1>Analytics</h1>
+<div class="row space"><div class="sub">Training trends from your connected Strava account.</div><button id="analyticsSync" class="secondary">Sync Strava</button></div>
+<div id="analyticsStatus" style="margin-top:10px"></div>
+<div id="analyticsCards" class="grid3" style="margin-top:14px"></div>
+<div class="card"><h2>Last 8 Weeks — Running</h2><div id="weeklyBars"></div></div>
+<div class="card"><h2>Recent Activities</h2><div id="recentActivities"></div></div>
+</section>
+
 <section id="planTab" class="hidden"><h1>Plan</h1><div class="card"><b>Completion</b><div id="progressText" class="small muted"></div><div class="progress" style="margin-top:10px"><div id="progressBar"></div></div></div><div id="planList"></div></section>
 
 <section id="historyTab" class="hidden"><h1>History</h1><div id="historyList"></div></section>
 
-<section id="settingsTab" class="hidden"><h1>Settings</h1><div class="card"><label>Name</label><input id="settingsName"><label>Plan start date</label><input id="settingsStart" type="date"><label>Signed in as</label><input id="settingsEmail" disabled><div class="notice" style="margin-top:14px">Workout content now comes from Supabase. Plan edits appear automatically without a GitHub redeploy or re-login. Your own history stays tied to your account.</div><div class="row" style="margin-top:14px"><button id="syncNow" class="secondary">Sync now</button><button id="exportAll" class="secondary">Export Full Backup</button><button id="signOut" class="danger">Sign out</button></div></div></section>
+<section id="settingsTab" class="hidden"><h1>Settings</h1>
+<div class="card"><label>Name</label><input id="settingsName"><label>Plan start date</label><input id="settingsStart" type="date"><label>Signed in as</label><input id="settingsEmail" disabled>
+<div class="notice" style="margin-top:14px">Workout content comes from Supabase. Plan edits appear automatically without a GitHub redeploy or re-login.</div>
+</div>
+<div class="card"><h2>Strava</h2><div id="stravaConnectionStatus" class="sub">Checking connection…</div>
+<div class="row" style="margin-top:14px"><button id="connectStrava" class="primary">Connect Strava</button><button id="syncStrava" class="secondary">Sync Activities</button></div>
+<div class="small muted" style="margin-top:10px">Strava is used only to import your own activity data for analytics. Your Strava authorization is stored server-side in Supabase.</div>
+</div>
+<div class="card"><div class="row"><button id="syncNow" class="secondary">Sync app data</button><button id="exportAll" class="secondary">Export Full Backup</button><button id="signOut" class="danger">Sign out</button></div></div>
+</section>
 
-<section id="adminTab" class="hidden"><h1>Edit Training Plan</h1><div class="notice">Only admin accounts can edit the shared plan. Existing completed-workout history keeps a snapshot of the workout as it was when completed.</div><div class="card"><label>Select workout</label><select id="adminWorkout"></select><div class="grid2"><div><label>Title</label><input id="aTitle"><label>Category</label><select id="aCategory"></select><label>Location</label><input id="aLocation"><label>Distance</label><input id="aDistance"></div><div><label>Estimated time</label><input id="aEstimate"><label>Effort</label><textarea id="aEffort"></textarea><label>Cardio / time-based</label><select id="aCardio"><option value="true">Yes</option><option value="false">No</option></select></div></div><label>Sets / reps / structure</label><textarea id="aScheme"></textarea><button id="saveWorkout" class="primary" style="width:100%;margin-top:14px">Save workout update</button><div id="adminMsg"></div></div></section>
+<section id="adminTab" class="hidden"><h1>Edit Training Plan</h1>
+<div class="notice">Pick the date you want to change. Workout colors match the normal calendar. Saved changes appear for everyone automatically.</div>
+<div class="card">
+  <div class="row space"><button id="adminPrevMonth" class="secondary">‹</button><h2 id="adminMonthTitle" style="margin:0"></h2><button id="adminNextMonth" class="secondary">›</button></div>
+  <div id="adminLegend" class="legend" style="margin:12px 0"></div>
+  <div class="calendarHead"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+  <div id="adminCalendarGrid" class="calendar"></div>
+</div>
+<div id="adminEditor" class="hidden">
+  <div class="card">
+    <div id="adminSelectedDate" class="pill"></div>
+    <h2 id="adminSelectedTitle" style="margin-top:10px"></h2>
+    <div class="grid2">
+      <div><label>Title</label><input id="aTitle"><label>Category</label><select id="aCategory"></select><label>Location</label><input id="aLocation"><label>Distance</label><input id="aDistance"></div>
+      <div><label>Estimated time</label><input id="aEstimate"><label>Effort</label><textarea id="aEffort"></textarea><label>Cardio / time-based</label><select id="aCardio"><option value="true">Yes</option><option value="false">No</option></select></div>
+    </div>
+    <label>Sets / reps / structure</label><textarea id="aScheme"></textarea>
+    <button id="saveWorkout" class="primary" style="width:100%;margin-top:14px">Save workout update</button><div id="adminMsg"></div>
+  </div>
+</div>
+</section>
 
 </div></div>
 
@@ -48,7 +88,7 @@ button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight
 <script>
 const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co',SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G',CACHE='tenk-v5-cache';
 const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
-let user=null,settings=null,workouts=[],types=[],logs={},viewWorkout=null,calendarCursor=new Date(),selectedCalendarKey=null;
+let user=null,settings=null,workouts=[],types=[],logs={},viewWorkout=null,calendarCursor=new Date(),selectedCalendarKey=null,adminCalendarCursor=new Date(),adminSelectedKey=null,stravaActivities=[];
 let cache=JSON.parse(localStorage.getItem(CACHE)||'null')||{settings:null,workouts:[],types:[],logs:{},dirty:{}};
 const $=x=>document.getElementById(x),saveCache=()=>localStorage.setItem(CACHE,JSON.stringify({settings,workouts,types,logs,dirty:cache.dirty||{}}));
 const msg=(el,t,c='notice')=>el.innerHTML=t?`<div class="${c}">${t}</div>`:'';
@@ -98,8 +138,8 @@ function enterApp(){
   $('settingsName').value=settings.display_name;$('settingsStart').value=settings.start_date;$('settingsEmail').value=user.email;
   $('greeting').textContent=`${settings.display_name}'s 10K Tracker`;
   if(settings.is_admin){$('adminTabBtn').classList.remove('hidden');buildAdmin()}
-  calendarCursor=new Date();
-  render();subscribe();
+  calendarCursor=new Date();adminCalendarCursor=new Date();
+  render();loadStravaStatus();loadAnalytics();subscribe();
 }
 
 function todayWorkout(){
@@ -182,22 +222,124 @@ function renderCalendar(){
 $('prevMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);selectedCalendarKey=null;$('calendarDetail').innerHTML='';renderCalendar()};
 $('nextMonth').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);selectedCalendarKey=null;$('calendarDetail').innerHTML='';renderCalendar()};
 
-function buildAdmin(){
-  $('adminWorkout').innerHTML=workouts.map(w=>`<option value="${w.workout_key}">W${w.week}D${w.day} — ${esc(w.title)}</option>`).join('');
-  $('aCategory').innerHTML=types.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
-  loadAdminForm();
-  $('adminWorkout').onchange=loadAdminForm;
+
+
+async function invokeFn(name,body={}){
+  const {data,error}=await client.functions.invoke(name,{body});
+  if(error)throw error;
+  return data;
 }
-function loadAdminForm(){
-  let w=workouts.find(x=>x.workout_key===$('adminWorkout').value)||workouts[0];if(!w)return;
+
+async function loadStravaStatus(){
+  let r=await client.from('strava_connections').select('athlete_id,athlete_name,last_synced_at').eq('user_id',user.id).maybeSingle();
+  let el=$('stravaConnectionStatus');
+  if(r.error){el.textContent='Strava connection unavailable.';return false}
+  if(!r.data){el.textContent='Not connected.';$('connectStrava').textContent='Connect Strava';return false}
+  let last=r.data.last_synced_at?new Date(r.data.last_synced_at).toLocaleString():'Never';
+  el.innerHTML=`Connected as <b>${esc(r.data.athlete_name||'Strava athlete')}</b> • Last sync: ${esc(last)}`;
+  $('connectStrava').textContent='Reconnect Strava';
+  return true;
+}
+
+$('connectStrava').onclick=async()=>{
+  try{
+    $('connectStrava').disabled=true;$('connectStrava').textContent='Opening Strava…';
+    let data=await invokeFn('strava-connect');
+    if(!data?.url)throw new Error('No authorization URL returned.');
+    location.href=data.url;
+  }catch(e){alert(e.message||String(e));$('connectStrava').disabled=false;$('connectStrava').textContent='Connect Strava'}
+};
+
+async function syncStravaNow(){
+  try{
+    $('syncStrava').disabled=true;$('analyticsSync').disabled=true;
+    $('syncStrava').textContent='Syncing…';$('analyticsSync').textContent='Syncing…';
+    let data=await invokeFn('strava-sync',{});
+    await loadStravaStatus();await loadAnalytics();
+    msg($('analyticsStatus'),`Synced ${data?.imported??0} activities from Strava.`,'success');
+  }catch(e){msg($('analyticsStatus'),e.message||String(e),'error')}
+  finally{$('syncStrava').disabled=false;$('analyticsSync').disabled=false;$('syncStrava').textContent='Sync Activities';$('analyticsSync').textContent='Sync Strava'}
+}
+$('syncStrava').onclick=syncStravaNow;$('analyticsSync').onclick=syncStravaNow;
+
+function miles(meters){return meters/1609.344}
+function paceText(distanceMeters,movingSeconds){
+  if(!distanceMeters||!movingSeconds)return '—';
+  let secPerMi=movingSeconds/miles(distanceMeters),m=Math.floor(secPerMi/60),s=Math.round(secPerMi%60);
+  if(s===60){m++;s=0} return `${m}:${String(s).padStart(2,'0')}/mi`;
+}
+function activityIsRun(a){return ['Run','TrailRun','VirtualRun'].includes(a.sport_type||a.type)}
+function activityIsRide(a){return ['Ride','MountainBikeRide','GravelRide','VirtualRide','EBikeRide'].includes(a.sport_type||a.type)}
+
+async function loadAnalytics(){
+  let since=new Date();since.setMonth(since.getMonth()-6);
+  let r=await client.from('strava_activities').select('*').eq('user_id',user.id).gte('start_date',since.toISOString()).order('start_date',{ascending:false}).limit(500);
+  if(r.error){msg($('analyticsStatus'),r.error.message,'error');return}
+  stravaActivities=r.data||[];
+  renderAnalytics();
+}
+function renderAnalytics(){
+  let runs=stravaActivities.filter(activityIsRun),rides=stravaActivities.filter(activityIsRide);
+  let runMiles=runs.reduce((s,a)=>s+miles(a.distance||0),0),rideMiles=rides.reduce((s,a)=>s+miles(a.distance||0),0);
+  let runSec=runs.reduce((s,a)=>s+(a.moving_time||0),0),completed=workouts.filter(w=>ownLog(w).completed).length;
+  $('analyticsCards').innerHTML=`
+    <div class="metric">Running miles<div class="statBig">${runMiles.toFixed(1)}</div><span class="small muted">last 6 months</span></div>
+    <div class="metric">Average run pace<div class="statBig">${paceText(runs.reduce((s,a)=>s+(a.distance||0),0),runSec)}</div><span class="small muted">moving time</span></div>
+    <div class="metric">Plan completion<div class="statBig">${workouts.length?Math.round(completed/workouts.length*100):0}%</div><span class="small muted">${completed}/${workouts.length}</span></div>
+    <div class="metric">Cycling miles<div class="statBig">${rideMiles.toFixed(1)}</div><span class="small muted">last 6 months</span></div>
+    <div class="metric">Runs logged<div class="statBig">${runs.length}</div><span class="small muted">from Strava</span></div>
+    <div class="metric">Activities<div class="statBig">${stravaActivities.length}</div><span class="small muted">last 6 months</span></div>`;
+  renderWeeklyBars(runs);renderRecentActivities();
+}
+function renderWeeklyBars(runs){
+  let weeks=[];
+  let now=new Date();now.setHours(0,0,0,0);
+  for(let i=7;i>=0;i--){
+    let end=new Date(now);end.setDate(end.getDate()-i*7);
+    let start=new Date(end);start.setDate(start.getDate()-6);
+    let total=runs.filter(a=>{let d=new Date(a.start_date);return d>=start&&d<=new Date(end.getTime()+86399999)}).reduce((s,a)=>s+miles(a.distance||0),0);
+    weeks.push({label:`${start.getMonth()+1}/${start.getDate()}`,total});
+  }
+  let max=Math.max(1,...weeks.map(x=>x.total));
+  $('weeklyBars').innerHTML=weeks.map(w=>`<div class="barRow"><span class="small muted">${w.label}</span><div class="barTrack"><div class="barFill" style="width:${w.total/max*100}%"></div></div><b class="small">${w.total.toFixed(1)} mi</b></div>`).join('');
+}
+function renderRecentActivities(){
+  let arr=stravaActivities.slice(0,10);
+  $('recentActivities').innerHTML=arr.length?arr.map(a=>`<div class="activityRow"><div class="row space"><b>${esc(a.name||a.sport_type||'Activity')}</b><span class="pill">${esc(a.sport_type||a.type||'')}</span></div><div class="small muted">${new Date(a.start_date).toLocaleString()}</div><div class="small" style="margin-top:4px">${miles(a.distance||0).toFixed(2)} mi • ${Math.round((a.moving_time||0)/60)} min${activityIsRun(a)?` • ${paceText(a.distance,a.moving_time)}`:''}</div></div>`).join(''):'<div class="muted">No Strava activities imported yet.</div>';
+}
+
+function renderAdminCalendar(){
+  $('adminMonthTitle').textContent=adminCalendarCursor.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  $('adminLegend').innerHTML=types.map(t=>`<div class="legendItem"><span class="legendSwatch" style="background:${t.color_hex}"></span>${esc(t.name)}</div>`).join('');
+  let y=adminCalendarCursor.getFullYear(),m=adminCalendarCursor.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),grid=$('adminCalendarGrid');grid.innerHTML='';
+  for(let i=0;i<first.getDay();i++){let d=document.createElement('div');d.className='calday empty';grid.appendChild(d)}
+  let today=new Date();today.setHours(0,0,0,0);
+  for(let day=1;day<=last.getDate();day++){
+    let date=new Date(y,m,day),w=workouts.find(x=>{let wd=workoutDate(x);return wd.getFullYear()===y&&wd.getMonth()===m&&wd.getDate()===day});
+    let d=document.createElement('div');d.className='calday'+(w?' hasWorkout':'')+(date.getTime()===today.getTime()?' today':'')+(w&&w.workout_key===adminSelectedKey?' selected':'');
+    d.innerHTML=`<div class="calnum">${day}</div>${w?`<div class="dot" style="background:${colorFor(w)}"></div>`:''}`;
+    if(w)d.onclick=()=>{adminSelectedKey=w.workout_key;renderAdminCalendar();loadAdminForm(w)};
+    grid.appendChild(d);
+  }
+}
+$('adminPrevMonth').onclick=()=>{adminCalendarCursor=new Date(adminCalendarCursor.getFullYear(),adminCalendarCursor.getMonth()-1,1);renderAdminCalendar()};
+$('adminNextMonth').onclick=()=>{adminCalendarCursor=new Date(adminCalendarCursor.getFullYear(),adminCalendarCursor.getMonth()+1,1);renderAdminCalendar()};
+
+function buildAdmin(){
+  $('aCategory').innerHTML=types.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+  renderAdminCalendar();
+}
+function loadAdminForm(w){
+  if(!w)return;
+  $('adminEditor').classList.remove('hidden');$('adminSelectedDate').textContent=fmt(workoutDate(w));$('adminSelectedTitle').textContent=w.title;
   $('aTitle').value=w.title;$('aCategory').value=w.category;$('aLocation').value=w.location;$('aDistance').value=w.distance;$('aEstimate').value=w.estimate;$('aEffort').value=w.effort;$('aCardio').value=String(w.cardio);$('aScheme').value=w.scheme;
 }
 $('saveWorkout').onclick=async()=>{
-  let key=$('adminWorkout').value,w=workouts.find(x=>x.workout_key===key);if(!w)return;
+  let key=adminSelectedKey,w=workouts.find(x=>x.workout_key===key);if(!w)return msg($('adminMsg'),'Select a workout date first.','error');
   let patch={title:$('aTitle').value.trim(),category:$('aCategory').value,location:$('aLocation').value.trim(),distance:$('aDistance').value.trim(),estimate:$('aEstimate').value.trim(),effort:$('aEffort').value.trim(),scheme:$('aScheme').value.trim(),cardio:$('aCardio').value==='true',revision:(w.revision||1)+1,updated_at:new Date().toISOString()};
   let r=await client.from('plan_workouts').update(patch).eq('workout_key',key).select().single();
   if(r.error)return msg($('adminMsg'),r.error.message,'error');
-  msg($('adminMsg'),'Workout updated. Everyone will see the change automatically.','success');await loadAll();render();buildAdmin();
+  msg($('adminMsg'),'Workout updated. Everyone will see the change automatically.','success');await loadAll();render();buildAdmin();loadAdminForm(workouts.find(x=>x.workout_key===key));
 };
 
 async function updateSettings(){
@@ -208,8 +350,8 @@ async function updateSettings(){
 $('settingsName').onchange=updateSettings;$('settingsStart').onchange=updateSettings;$('syncNow').onclick=async()=>{await loadAll();render()};$('signOut').onclick=async()=>{await client.auth.signOut();location.reload()};
 $('exportAll').onclick=()=>{let data={version:5,exported_at:new Date().toISOString(),settings,workout_types:types,plan_workouts:workouts,workout_logs:Object.values(logs)};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='10k-tracker-v5-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 
-function render(){renderToday(viewWorkout||todayWorkout());renderCalendar();renderPlan();renderHistory();saveCache()}
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','plan','history','settings','admin'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='admin'&&settings.is_admin)buildAdmin()});
+function render(){renderToday(viewWorkout||todayWorkout());renderCalendar();renderPlan();renderHistory();if(settings?.is_admin)renderAdminCalendar();saveCache()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','calendar','analytics','plan','history','settings','admin'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='calendar')renderCalendar();if(b.dataset.tab==='analytics')loadAnalytics();if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory();if(b.dataset.tab==='admin'&&settings.is_admin)buildAdmin()});
 function subscribe(){client.channel('v5-plan').on('postgres_changes',{event:'*',schema:'public',table:'plan_workouts'},async()=>{await loadAll();render();if(settings.is_admin)buildAdmin()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_types'},async()=>{await loadAll();render()}).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},async()=>{await loadAll();render()}).subscribe()}
 window.addEventListener('online',async()=>{await loadAll();render()});window.addEventListener('offline',()=>badge('Offline cache',false));if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});checkSession();
 </script></body></html>
