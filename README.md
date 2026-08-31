@@ -1,32 +1,26 @@
-# 10K Workout Tracker V4
+# 10K Workout Tracker V6
 
-V4 removes all Supabase setup fields from the app and removes teams entirely.
+V6 removes the admin concept entirely.
 
-## User experience
-- Open app
-- Create account or sign in
-- Enter your name and plan start date once
-- Track workouts
+## Editing behavior
+- Any signed-in user can edit the shared workout plan.
+- A workout is editable for you until you personally mark it complete.
+- Once you complete a workout, the editor locks that workout for your account.
+- Your completed workout snapshot remains preserved in your history.
+- Other users who have not completed that workout can still edit the shared plan.
 
-Each account has its own:
-- plan start date
-- workout completion
-- duration logs
-- weight logs
-- notes
-- workout photos
-- history
+## Calendar
+Workout-type colors remain consistent across workout cards and the calendar:
+- Run: blue
+- Strength: red
+- Bike: green
+- Recovery: purple
+- Race: amber
 
-The Supabase Project URL and publishable browser key are embedded in the app.
+## Upgrade
+1. Run `SUPABASE_SETUP_V6.sql` in Supabase SQL Editor.
+2. Replace the GitHub Pages files with the V6 files.
+3. Commit to `main`.
+4. Reload the app.
 
-## Upgrade steps
-1. Run `SUPABASE_SETUP_V4.sql` in your existing Supabase project's SQL Editor.
-2. Replace the files in your GitHub Pages repository with the V4 files.
-3. Commit changes to `main`.
-4. Reload the GitHub Pages site / PWA.
-5. Create an account.
-
-## Data durability
-Supabase is the primary cloud store. The app also keeps a local offline cache and queues offline workout changes. Use Export Full Backup periodically for a JSON copy of your settings, logs, and training plan.
-
-Photos are stored privately in Supabase Storage and the JSON backup contains their storage paths rather than duplicate image files.
+After that, workout edits happen inside the app without GitHub redeploys.
