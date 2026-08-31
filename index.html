@@ -4,75 +4,332 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="10K Tracker"><link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V3</title>
+<link rel="apple-touch-icon" href="icons/icon-180.png"><title>10K Tracker V4</title>
 <style>
 :root{--bg:#0b1220;--card:#111827;--card2:#172033;--text:#f8fafc;--muted:#a9b4c7;--accent:#60a5fa;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--border:#263247}
 *{box-sizing:border-box}body{margin:0;background:#0b1220;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
 .wrap{max-width:800px;margin:auto;padding:18px 16px 90px}h1{font-size:28px;margin:8px 0 4px}h2{font-size:19px;margin:0 0 12px}h3{margin:0;font-size:18px}
 .sub,.muted{color:var(--muted)}.sub{font-size:14px;line-height:1.45}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:14px 0}
 .hero{background:linear-gradient(135deg,#172033,#0f1a2d)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.metric{background:var(--card2);border-radius:13px;padding:11px}.metric b{display:block;font-size:15px;margin-top:4px}label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+.metric{background:var(--card2);border-radius:13px;padding:11px}.metric b{display:block;font-size:15px;margin-top:4px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
 input,textarea,button{font:inherit}input,textarea{width:100%;border:1px solid var(--border);border-radius:12px;background:#0c1424;color:var(--text);padding:12px;min-height:44px;font-size:16px}
-textarea{min-height:78px}button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight:700}.primary{background:var(--accent);color:#06111f}.secondary{background:#22304a;color:var(--text);border:1px solid var(--border)}.done{background:var(--ok);color:#052016}.danger{background:#3b1720;color:#fecdd3}
+textarea{min-height:78px}button{min-height:44px;border-radius:12px;border:0;padding:10px 14px;font-weight:700}
+.primary{background:var(--accent);color:#06111f}.secondary{background:#22304a;color:var(--text);border:1px solid var(--border)}.done{background:var(--ok);color:#052016}.danger{background:#3b1720;color:#fecdd3}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:#1f2a40;color:#d9e5f5}.sync{background:#123628;color:#a7f3d0}.offline{background:#452a12;color:#fde68a}
-.member{background:var(--card2);border-radius:14px;padding:12px}.member.me{outline:1px solid var(--accent)}.photo{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(--border)}.hidden{display:none!important}
-.topbar{position:sticky;top:0;z-index:4;background:rgba(11,18,32,.94);backdrop-filter:blur(12px);padding:10px 0;border-bottom:1px solid var(--border)}.tabs{display:flex;gap:7px;overflow:auto}.tabs button{white-space:nowrap;background:#152035;color:#cbd5e1;padding:8px 12px;min-height:38px}.tabs button.active{background:var(--accent);color:#06111f}
-.day{border-left:4px solid #334155}.day.complete{border-left-color:var(--ok)}.progress{height:10px;background:#1c2639;border-radius:999px;overflow:hidden}.progress>div{height:100%;background:var(--ok)}.notice{background:#1b273c;border-left:4px solid var(--warn);padding:12px;border-radius:10px;font-size:13px}.error{background:#3b1720;border-left:4px solid var(--bad);padding:12px;border-radius:10px;color:#fecdd3;font-size:13px}.success{background:#123628;border-left:4px solid var(--ok);padding:12px;border-radius:10px;color:#d1fae5;font-size:13px}.small{font-size:12px}
+.photo{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(--border)}.hidden{display:none!important}
+.topbar{position:sticky;top:0;z-index:4;background:rgba(11,18,32,.94);backdrop-filter:blur(12px);padding:10px 0;border-bottom:1px solid var(--border)}
+.tabs{display:flex;gap:7px;overflow:auto}.tabs button{white-space:nowrap;background:#152035;color:#cbd5e1;padding:8px 12px;min-height:38px}.tabs button.active{background:var(--accent);color:#06111f}
+.day{border-left:4px solid #334155}.day.complete{border-left-color:var(--ok)}.progress{height:10px;background:#1c2639;border-radius:999px;overflow:hidden}.progress>div{height:100%;background:var(--ok)}
+.notice{background:#1b273c;border-left:4px solid var(--warn);padding:12px;border-radius:10px;font-size:13px}.error{background:#3b1720;border-left:4px solid var(--bad);padding:12px;border-radius:10px;color:#fecdd3;font-size:13px}.success{background:#123628;border-left:4px solid var(--ok);padding:12px;border-radius:10px;color:#d1fae5;font-size:13px}.small{font-size:12px}
 @media(max-width:540px){.grid2,.grid3{grid-template-columns:1fr}}
-</style></head><body><div class="wrap">
-<div id="setup"><h1>10K Tracker V3</h1><div class="sub">Separate accounts • shared team • durable cloud storage • no swimming</div>
-<div class="card"><h2>Connect Supabase</h2><label>Project URL</label><input id="cfgUrl"><label>Publishable / anon key</label><textarea id="cfgKey"></textarea><button class="primary" id="saveCfg" style="width:100%;margin-top:14px">Save connection</button><div id="cfgMsg"></div></div>
-<div class="card hidden" id="authCard"><h2>Your account</h2><label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password"><div class="row" style="margin-top:14px"><button id="login" class="primary">Sign in</button><button id="signup" class="secondary">Create account</button></div><div id="authMsg"></div></div>
-<div class="card hidden" id="teamCard"><h2>Training team</h2><label>Your display name</label><input id="displayName" placeholder="Jonathan or Nicole"><div class="grid2"><div><label>Create team</label><input id="teamName" value="Sub-60 10K"><label>Plan start date</label><input id="newStart" type="date"><button id="createTeam" class="primary" style="width:100%;margin-top:12px">Create team</button></div><div><label>Join code</label><input id="joinCode"><button id="joinTeam" class="secondary" style="width:100%;margin-top:12px">Join team</button></div></div><div id="teamMsg"></div></div></div>
-<div id="app" class="hidden"><div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
-<section id="todayTab"><h1>10K Tracker</h1><div class="sub">32:00 5K baseline → sub-60:00 10K. Training runs never exceed 6.0 miles.</div><div class="card hero"><div class="row space"><div><span id="todayWeek" class="pill"></span><h2 id="todayTitle" style="margin-top:10px"></h2></div><span id="todayCategory" class="pill"></span></div><div class="grid3"><div class="metric">Location<b id="todayLocation"></b></div><div class="metric">Distance<b id="todayDistance"></b></div><div class="metric">Estimate<b id="todayEstimate"></b></div></div><label>Structure</label><div id="todayScheme" class="sub"></div><label>Effort target</label><div id="todayEffort" class="sub"></div></div><div id="todayLogs"></div></section>
-<section id="planTab" class="hidden"><h1>Plan</h1><div class="card"><b>Team completion</b><div id="progressText" class="small muted"></div><div class="progress" style="margin-top:10px"><div id="progressBar"></div></div></div><div id="planList"></div></section>
+</style></head>
+<body><div class="wrap">
+
+<div id="authGate">
+  <h1>10K Tracker</h1>
+  <div class="sub">Your personal 10K training app. No setup codes, no team creation.</div>
+  <div class="card">
+    <h2>Sign in or create account</h2>
+    <label>Email</label><input id="email" type="email" autocomplete="email">
+    <label>Password</label><input id="password" type="password" minlength="6" autocomplete="current-password">
+    <div class="row" style="margin-top:14px">
+      <button id="login" class="primary">Sign in</button>
+      <button id="signup" class="secondary">Create account</button>
+    </div>
+    <div id="authMsg" style="margin-top:10px"></div>
+  </div>
+  <div class="card hidden" id="profileCard">
+    <h2>Finish setup</h2>
+    <label>Your name</label><input id="displayName" placeholder="Jonathan">
+    <label>Plan start date</label><input id="startDateCreate" type="date">
+    <button id="finishSetup" class="primary" style="width:100%;margin-top:14px">Start training plan</button>
+    <div id="profileMsg" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<div class="topbar"><div class="row space"><div class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="plan">Plan</button><button data-tab="history">History</button><button data-tab="settings">Settings</button></div><span id="syncBadge" class="pill sync">Synced</span></div></div>
+
+<section id="todayTab">
+<h1 id="greeting">10K Tracker</h1>
+<div class="sub">32:00 5K baseline → sub-60:00 10K. Training runs never exceed 6.0 miles.</div>
+<div class="card hero">
+  <div class="row space"><div><span id="todayWeek" class="pill"></span><h2 id="todayTitle" style="margin-top:10px"></h2></div><span id="todayCategory" class="pill"></span></div>
+  <div class="grid3"><div class="metric">Location<b id="todayLocation"></b></div><div class="metric">Distance<b id="todayDistance"></b></div><div class="metric">Estimate<b id="todayEstimate"></b></div></div>
+  <label>Structure</label><div id="todayScheme" class="sub"></div>
+  <label>Effort target</label><div id="todayEffort" class="sub"></div>
+</div>
+<div id="todayLog"></div>
+</section>
+
+<section id="planTab" class="hidden">
+<h1>Plan</h1>
+<div class="card"><b>Completion</b><div id="progressText" class="small muted"></div><div class="progress" style="margin-top:10px"><div id="progressBar"></div></div></div>
+<div id="planList"></div>
+</section>
+
 <section id="historyTab" class="hidden"><h1>History</h1><div id="historyList"></div></section>
-<section id="settingsTab" class="hidden"><h1>Settings</h1><div class="card"><label>Team</label><input id="settingsTeam" disabled><label>Join code</label><input id="settingsCode" disabled><label>Plan start date</label><input id="settingsStart" type="date"><label>Signed in as</label><input id="settingsEmail" disabled><div class="notice" style="margin-top:14px">Supabase is the source of truth; each phone also keeps an offline cache. Export a full JSON backup periodically for an independent copy.</div><div class="row" style="margin-top:14px"><button id="syncNow" class="secondary">Sync now</button><button id="exportAll" class="secondary">Export Full Backup</button><button id="signOut" class="danger">Sign out</button></div></div></section></div></div>
+
+<section id="settingsTab" class="hidden">
+<h1>Settings</h1>
+<div class="card">
+  <label>Name</label><input id="settingsName">
+  <label>Plan start date</label><input id="settingsStart" type="date">
+  <label>Signed in as</label><input id="settingsEmail" disabled>
+  <div class="notice" style="margin-top:14px">Your workout history is stored in Supabase and also cached on this device for offline use. Export a backup periodically for another independent copy.</div>
+  <div class="row" style="margin-top:14px">
+    <button id="syncNow" class="secondary">Sync now</button>
+    <button id="exportAll" class="secondary">Export Full Backup</button>
+    <button id="signOut" class="danger">Sign out</button>
+  </div>
+</div>
+</section>
+</div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL='https://ewfsszhehargnzherokw.supabase.co';
+const SUPABASE_KEY='sb_publishable_OvrGMjxHjInJpEKWc9gWQQ_bPp3955G';
 const PLAN=[{"week":1,"day":1,"title":"Easy Run + Strides","category":"Run","location":"Treadmill or flat outdoor route","scheme":"25 min easy + 4 x 20 sec relaxed strides / 60 sec walk","distance":"~2.2\u20132.5 mi","effort":"RPE 4/10; easy pace 11:15\u201312:30/mi","estimate":"35 min","cardio":true,"notes":""},{"week":1,"day":2,"title":"Strength A","category":"Strength","location":"Princeton Club weights + turf","scheme":"Goblet squat 3x10; DB bench 3x10; Romanian deadlift 3x10; cable row 3x12; walking lunge 2x10/leg; plank 3x40 sec","distance":"\u2014","effort":"RPE 6\u20137/10; leave 2\u20133 reps in reserve","estimate":"50 min","cardio":false,"notes":""},{"week":1,"day":3,"title":"400m Intervals","category":"Run","location":"Treadmill or track","scheme":"10 min warm-up; 6 x 400m @ 2:24\u20132:28 with 200m walk/jog; 10 min cool-down","distance":"~3.2 mi","effort":"RPE 7/10 on reps; controlled, not sprinting","estimate":"45 min","cardio":true,"notes":""},{"week":1,"day":4,"title":"Recovery Cycle + Mobility","category":"Bike","location":"Princeton Club indoor cycle + turf","scheme":"25 min easy spin at 80\u201395 rpm + 10 min hip/ankle mobility + 5 min easy core","distance":"\u2014","effort":"RPE 3/10; pure recovery","estimate":"40 min","cardio":true,"notes":""},{"week":1,"day":5,"title":"Tempo Blocks","category":"Run","location":"Treadmill","scheme":"10 min easy; 3 x 5 min @ 9:55\u201310:05/mi with 2 min easy; 8 min cool-down","distance":"~3.5 mi","effort":"RPE 6\u20137/10","estimate":"40 min","cardio":true,"notes":""},{"week":1,"day":6,"title":"Bike Endurance","category":"Bike","location":"Outdoor bike or indoor cycle","scheme":"10 min easy; 40 min steady; 5 x 30 sec high-cadence / 90 sec easy; 5 min cool-down","distance":"~12\u201316 mi outdoor","effort":"RPE 4\u20135/10","estimate":"60 min","cardio":true,"notes":""},{"week":1,"day":7,"title":"Long Easy Run","category":"Run","location":"Flat outdoor route or treadmill","scheme":"Continuous easy run; walk 60 sec every 10 min if needed","distance":"4.0 mi","effort":"RPE 4/10; conversational","estimate":"48\u201352 min","cardio":true,"notes":""},{"week":2,"day":1,"title":"Easy Run","category":"Run","location":"Treadmill or outdoor","scheme":"30 min easy + 4 x 20 sec strides","distance":"~2.7\u20133.0 mi","effort":"RPE 4/10","estimate":"38 min","cardio":true,"notes":""},{"week":2,"day":2,"title":"Strength B","category":"Strength","location":"Princeton Club weights + turf","scheme":"Trap-bar or DB deadlift 3x8; incline DB press 3x10; lat pulldown 3x10; split squat 3x8/leg; calf raise 3x15; Pallof press 3x10/side","distance":"\u2014","effort":"RPE 6\u20137/10","estimate":"50 min","cardio":false,"notes":""},{"week":2,"day":3,"title":"400m Intervals","category":"Run","location":"Treadmill or track","scheme":"10 min warm-up; 8 x 400m @ 2:22\u20132:26 with 200m walk/jog; 10 min cool-down","distance":"~3.7 mi","effort":"RPE 7/10","estimate":"50 min","cardio":true,"notes":""},{"week":2,"day":4,"title":"Recovery Cycle","category":"Bike","location":"Indoor cycle","scheme":"35 min easy spin, cadence 80\u201395 rpm","distance":"\u2014","effort":"RPE 3/10","estimate":"35 min","cardio":true,"notes":""},{"week":2,"day":5,"title":"Tempo Blocks","category":"Run","location":"Treadmill","scheme":"10 min easy; 4 x 5 min @ 9:50\u201310:00/mi with 90 sec easy; 8 min cool-down","distance":"~4.0 mi","effort":"RPE 6\u20137/10","estimate":"45 min","cardio":true,"notes":""},{"week":2,"day":6,"title":"Strength A Lite + Mobility","category":"Strength","location":"Princeton Club","scheme":"Goblet squat 2x10; DB bench 2x10; row 2x12; RDL 2x10; 10 min mobility","distance":"\u2014","effort":"RPE 5\u20136/10","estimate":"35 min","cardio":false,"notes":""},{"week":2,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor or treadmill","scheme":"Easy continuous run","distance":"4.5 mi","effort":"RPE 4/10","estimate":"52\u201358 min","cardio":true,"notes":""},{"week":3,"day":1,"title":"Easy Run + Strides","category":"Run","location":"Outdoor or treadmill","scheme":"30 min easy + 6 x 20 sec strides","distance":"~3.0 mi","effort":"RPE 4/10","estimate":"40 min","cardio":true,"notes":""},{"week":3,"day":2,"title":"Strength A","category":"Strength","location":"Princeton Club","scheme":"Goblet squat 3x10; DB bench 3x10; RDL 3x10; seated row 3x12; reverse lunge 3x8/leg; plank 3x45 sec","distance":"\u2014","effort":"RPE 6\u20137/10","estimate":"50 min","cardio":false,"notes":""},{"week":3,"day":3,"title":"400m Intervals","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 10 x 400m @ 2:20\u20132:24 with 200m jog; 10 min cool-down","distance":"~4.5 mi","effort":"RPE 7\u20138/10","estimate":"58 min","cardio":true,"notes":""},{"week":3,"day":4,"title":"Recovery Cycle","category":"Bike","location":"Princeton Club indoor cycle","scheme":"35 min easy spin; smooth cadence, light resistance","distance":"\u2014","effort":"RPE 3/10","estimate":"35 min","cardio":true,"notes":""},{"week":3,"day":5,"title":"Cruise Intervals","category":"Run","location":"Treadmill","scheme":"10 min easy; 3 x 8 min @ 9:45\u20139:55/mi with 2 min easy; 8 min cool-down","distance":"~4.2 mi","effort":"RPE 6\u20137/10","estimate":"48 min","cardio":true,"notes":""},{"week":3,"day":6,"title":"Bike Endurance","category":"Bike","location":"Outdoor or indoor cycle","scheme":"60 min steady with 6 x 1 min strong / 2 min easy","distance":"\u2014","effort":"RPE 4\u20135/10","estimate":"60 min","cardio":true,"notes":""},{"week":3,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy run; keep it relaxed","distance":"5.0 mi","effort":"RPE 4/10","estimate":"58\u201364 min","cardio":true,"notes":""},{"week":4,"day":1,"title":"Recovery Run","category":"Run","location":"Treadmill or outdoor","scheme":"25 min very easy","distance":"~2.2 mi","effort":"RPE 3\u20134/10","estimate":"30 min","cardio":true,"notes":""},{"week":4,"day":2,"title":"Strength B","category":"Strength","location":"Princeton Club","scheme":"Deadlift 3x8; incline DB press 3x10; pulldown 3x10; split squat 3x8/leg; calf raise 3x15; Pallof 3x10/side","distance":"\u2014","effort":"RPE 6/10","estimate":"45 min","cardio":false,"notes":""},{"week":4,"day":3,"title":"Fast 400s","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 8 x 400m @ 2:17\u20132:22 with 200m jog; 10 min cool-down","distance":"~4.0 mi","effort":"RPE 8/10","estimate":"52 min","cardio":true,"notes":""},{"week":4,"day":4,"title":"Recovery Walk + Mobility","category":"Recovery","location":"Treadmill + turf","scheme":"25 min brisk incline walk (1\u20134% grade) + 10 min mobility","distance":"~1.5\u20132.0 mi","effort":"RPE 3/10","estimate":"35 min","cardio":true,"notes":""},{"week":4,"day":5,"title":"Goal-Pace Repeats","category":"Run","location":"Treadmill","scheme":"10 min easy; 5 x 800m @ 4:46\u20134:50 with 400m easy jog; 8 min cool-down","distance":"~4.8 mi","effort":"RPE 7/10","estimate":"55 min","cardio":true,"notes":""},{"week":4,"day":6,"title":"Mobility + Easy Cycle","category":"Bike","location":"Indoor cycle + turf","scheme":"25 min easy spin + 15 min mobility/core","distance":"\u2014","effort":"RPE 3/10","estimate":"40 min","cardio":true,"notes":""},{"week":4,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy continuous run","distance":"4.5 mi","effort":"RPE 4/10","estimate":"52\u201358 min","cardio":true,"notes":""},{"week":5,"day":1,"title":"Easy Run + Strides","category":"Run","location":"Outdoor or treadmill","scheme":"35 min easy + 4 x 20 sec strides","distance":"~3.2 mi","effort":"RPE 4/10","estimate":"43 min","cardio":true,"notes":""},{"week":5,"day":2,"title":"Strength A","category":"Strength","location":"Princeton Club","scheme":"Squat 3x8; DB bench 3x8; RDL 3x8; row 3x10; walking lunge 2x12/leg; plank 3x50 sec","distance":"\u2014","effort":"RPE 7/10","estimate":"50 min","cardio":false,"notes":""},{"week":5,"day":3,"title":"400m Intervals","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 12 x 400m @ 2:18\u20132:22 with 200m jog; 10 min cool-down","distance":"~5.1 mi","effort":"RPE 7\u20138/10","estimate":"62 min","cardio":true,"notes":""},{"week":5,"day":4,"title":"Easy Cycle + Core","category":"Bike","location":"Princeton Club indoor cycle + turf","scheme":"30 min easy spin + dead bug 3x10/side + side plank 2x30 sec/side","distance":"\u2014","effort":"RPE 3\u20134/10","estimate":"42 min","cardio":true,"notes":""},{"week":5,"day":5,"title":"Threshold Blocks","category":"Run","location":"Treadmill","scheme":"10 min easy; 2 x 12 min @ 9:45\u20139:55/mi with 3 min easy; 8 min cool-down","distance":"~4.4 mi","effort":"RPE 7/10","estimate":"48 min","cardio":true,"notes":""},{"week":5,"day":6,"title":"Bike Endurance","category":"Bike","location":"Outdoor or indoor","scheme":"65 min steady; last 15 min moderately strong","distance":"\u2014","effort":"RPE 4\u20136/10","estimate":"65 min","cardio":true,"notes":""},{"week":5,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy run","distance":"5.5 mi","effort":"RPE 4/10","estimate":"64\u201370 min","cardio":true,"notes":""},{"week":6,"day":1,"title":"Recovery Run","category":"Run","location":"Treadmill or outdoor","scheme":"30 min easy","distance":"~2.6 mi","effort":"RPE 3\u20134/10","estimate":"35 min","cardio":true,"notes":""},{"week":6,"day":2,"title":"Strength B","category":"Strength","location":"Princeton Club","scheme":"Deadlift 3x6; incline DB press 3x8; pulldown 3x8; split squat 3x8/leg; calf raise 3x15; side plank 3x35 sec/side","distance":"\u2014","effort":"RPE 7/10","estimate":"50 min","cardio":false,"notes":""},{"week":6,"day":3,"title":"Speed Mix","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 6 x 400m @ 2:15\u20132:20, then 4 x 200m brisk with 200m easy between all reps; cool-down","distance":"~3.8 mi","effort":"RPE 8/10","estimate":"50 min","cardio":true,"notes":""},{"week":6,"day":4,"title":"Recovery Cycle","category":"Bike","location":"Indoor cycle","scheme":"40 min easy spin","distance":"\u2014","effort":"RPE 3/10","estimate":"40 min","cardio":true,"notes":""},{"week":6,"day":5,"title":"Goal-Pace 1Ks","category":"Run","location":"Treadmill or track","scheme":"10 min easy; 4 x 1 km @ 5:55\u20136:00 with 400m easy jog; 10 min cool-down","distance":"~4.7 mi","effort":"RPE 7/10","estimate":"55 min","cardio":true,"notes":""},{"week":6,"day":6,"title":"Mobility + Core","category":"Strength","location":"Turf / home","scheme":"Dead bug 3x10/side; bird dog 3x10/side; side plank 3x40 sec; hip mobility 15 min","distance":"\u2014","effort":"RPE 3\u20134/10","estimate":"35 min","cardio":false,"notes":""},{"week":6,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy continuous run","distance":"6.0 mi","effort":"RPE 4/10","estimate":"70\u201376 min","cardio":true,"notes":""},{"week":7,"day":1,"title":"Easy Run + Strides","category":"Run","location":"Outdoor or treadmill","scheme":"30 min easy + 6 x 20 sec strides","distance":"~3.0 mi","effort":"RPE 4/10","estimate":"40 min","cardio":true,"notes":""},{"week":7,"day":2,"title":"Strength A Reduced","category":"Strength","location":"Princeton Club","scheme":"Squat 3x8; DB bench 3x8; RDL 2x8; row 3x10; lunges 2x8/leg; plank 2x45 sec","distance":"\u2014","effort":"RPE 6/10","estimate":"45 min","cardio":false,"notes":""},{"week":7,"day":3,"title":"400m Intervals","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 10 x 400m @ 2:16\u20132:20 with 200m jog; cool-down","distance":"~4.5 mi","effort":"RPE 8/10","estimate":"58 min","cardio":true,"notes":""},{"week":7,"day":4,"title":"Recovery Cycle","category":"Bike","location":"Princeton Club indoor cycle","scheme":"30 min very easy spin; cadence 85\u201395 rpm, low resistance","distance":"\u2014","effort":"RPE 2\u20133/10","estimate":"30 min","cardio":true,"notes":""},{"week":7,"day":5,"title":"Goal-Pace Ladder","category":"Run","location":"Treadmill or track","scheme":"10 min easy; 400m / 800m / 1200m / 800m / 400m at 9:35\u20139:40/mi equivalent; 400m easy jog between; cool-down","distance":"~4.6 mi","effort":"RPE 7/10","estimate":"55 min","cardio":true,"notes":""},{"week":7,"day":6,"title":"Bike Endurance","category":"Bike","location":"Outdoor or indoor","scheme":"60 min steady, mostly easy","distance":"\u2014","effort":"RPE 4/10","estimate":"60 min","cardio":true,"notes":""},{"week":7,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy run, last 10 min moderately steady if feeling good","distance":"5.5 mi","effort":"RPE 4\u20135/10","estimate":"64\u201370 min","cardio":true,"notes":""},{"week":8,"day":1,"title":"Recovery Run","category":"Run","location":"Treadmill or outdoor","scheme":"25 min very easy","distance":"~2.2 mi","effort":"RPE 3/10","estimate":"30 min","cardio":true,"notes":""},{"week":8,"day":2,"title":"Strength B Reduced","category":"Strength","location":"Princeton Club","scheme":"Deadlift 2x6; incline DB press 2x8; pulldown 2x8; split squat 2x8/leg; calf raise 2x15; Pallof 2x10/side","distance":"\u2014","effort":"RPE 5\u20136/10","estimate":"40 min","cardio":false,"notes":""},{"week":8,"day":3,"title":"Race-Pace 400s","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 12 x 400m @ 2:20\u20132:24 with 200m jog; cool-down","distance":"~5.1 mi","effort":"RPE 7/10; smooth rhythm","estimate":"62 min","cardio":true,"notes":""},{"week":8,"day":4,"title":"Recovery Walk + Mobility","category":"Recovery","location":"Treadmill + turf","scheme":"25 min easy walk + 10 min lower-body mobility","distance":"~1.3\u20131.8 mi","effort":"RPE 2\u20133/10","estimate":"35 min","cardio":true,"notes":""},{"week":8,"day":5,"title":"10K Simulation Blocks","category":"Run","location":"Treadmill","scheme":"10 min easy; 3 x 1 mile @ 9:35\u20139:40/mi with 3 min easy jog; cool-down","distance":"~4.8 mi","effort":"RPE 7\u20138/10","estimate":"55 min","cardio":true,"notes":""},{"week":8,"day":6,"title":"Easy Cycle + Mobility","category":"Bike","location":"Indoor cycle + turf","scheme":"30 min easy spin + 10 min mobility","distance":"\u2014","effort":"RPE 3/10","estimate":"40 min","cardio":true,"notes":""},{"week":8,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy continuous run","distance":"6.0 mi","effort":"RPE 4/10","estimate":"69\u201375 min","cardio":true,"notes":""},{"week":9,"day":1,"title":"Easy Run + Strides","category":"Run","location":"Outdoor or treadmill","scheme":"30 min easy + 4 x 20 sec strides","distance":"~2.8 mi","effort":"RPE 4/10","estimate":"38 min","cardio":true,"notes":""},{"week":9,"day":2,"title":"Strength Maintenance","category":"Strength","location":"Princeton Club","scheme":"Goblet squat 2x8; DB bench 2x8; RDL 2x8; row 2x10; reverse lunge 2x8/leg; plank 2x40 sec","distance":"\u2014","effort":"RPE 5\u20136/10","estimate":"35 min","cardio":false,"notes":""},{"week":9,"day":3,"title":"Sharp 400s","category":"Run","location":"Track or treadmill","scheme":"12 min warm-up; 8 x 400m @ 2:15\u20132:20 with 200m jog; cool-down","distance":"~4.0 mi","effort":"RPE 8/10","estimate":"50 min","cardio":true,"notes":""},{"week":9,"day":4,"title":"Easy Cycle","category":"Bike","location":"Princeton Club indoor cycle","scheme":"30 min easy spin, light resistance","distance":"\u2014","effort":"RPE 3/10","estimate":"30 min","cardio":true,"notes":""},{"week":9,"day":5,"title":"Goal-Pace Rehearsal","category":"Run","location":"Treadmill or outdoor","scheme":"10 min easy; 2 mi @ 9:38\u20139:42/mi; 4 min easy; 1 mi @ goal pace; cool-down","distance":"~4.5 mi","effort":"RPE 7/10","estimate":"48 min","cardio":true,"notes":""},{"week":9,"day":6,"title":"Easy Cycle","category":"Bike","location":"Indoor cycle","scheme":"35 min easy spin","distance":"\u2014","effort":"RPE 3/10","estimate":"35 min","cardio":true,"notes":""},{"week":9,"day":7,"title":"Long Easy Run","category":"Run","location":"Outdoor","scheme":"Easy run","distance":"5.0 mi","effort":"RPE 4/10","estimate":"58\u201364 min","cardio":true,"notes":""},{"week":10,"day":1,"title":"Easy Run","category":"Run","location":"Outdoor or treadmill","scheme":"25 min easy + 4 x 15 sec strides","distance":"~2.2 mi","effort":"RPE 3\u20134/10","estimate":"32 min","cardio":true,"notes":""},{"week":10,"day":2,"title":"Light Strength + Mobility","category":"Strength","location":"Princeton Club","scheme":"Goblet squat 2x6; DB bench 2x6; cable row 2x8; calf raise 2x12; 15 min mobility","distance":"\u2014","effort":"RPE 4\u20135/10; no soreness","estimate":"35 min","cardio":false,"notes":""},{"week":10,"day":3,"title":"Race-Pace 400s","category":"Run","location":"Track or treadmill","scheme":"10 min warm-up; 6 x 400m @ 2:22\u20132:24 with 200m easy; 8 min cool-down","distance":"~3.2 mi","effort":"RPE 6\u20137/10","estimate":"42 min","cardio":true,"notes":""},{"week":10,"day":4,"title":"Recovery Walk + Mobility","category":"Recovery","location":"Treadmill + turf","scheme":"20 min easy walk + 10 min mobility; finish fresher than you started","distance":"~1.0\u20131.5 mi","effort":"RPE 2/10","estimate":"30 min","cardio":true,"notes":""},{"week":10,"day":5,"title":"Tune-Up","category":"Run","location":"Treadmill or outdoor","scheme":"10 min easy; 3 x 3 min @ goal pace with 2 min easy; 8 min cool-down","distance":"~2.7 mi","effort":"RPE 6/10","estimate":"35 min","cardio":true,"notes":""},{"week":10,"day":6,"title":"Pre-Race Shakeout","category":"Run","location":"Outdoor or treadmill","scheme":"15\u201320 min very easy + 4 x 15 sec strides","distance":"~1.5\u20131.8 mi","effort":"RPE 2\u20133/10","estimate":"25 min","cardio":true,"notes":""},{"week":10,"day":7,"title":"10K Race","category":"Race","location":"Race course","scheme":"Warm up 8\u201310 min easy + mobility; race 10K. Aim first 2 mi around 9:45/mi, settle near 9:35\u20139:40, race final 2K by feel.","distance":"6.2 mi race","effort":"Goal: <60:00. Do not exceed RPE 7 early; build to 9\u201310 late.","estimate":"70\u201380 min incl. warm-up","cardio":true,"notes":""}];
-const CFG='tenk-v3-config',CACHE='tenk-v3-cache';
-let config=JSON.parse(localStorage.getItem(CFG)||'null'), cache=JSON.parse(localStorage.getItem(CACHE)||'null')||{team:null,members:[],logs:{},dirty:{}};
-let client=null,user=null,team=cache.team,members=cache.members||[],logs=cache.logs||{},viewWorkout=null;
-const $=x=>document.getElementById(x), save=()=>localStorage.setItem(CACHE,JSON.stringify({team,members,logs,dirty:cache.dirty||{}}));
+const CACHE='tenk-v4-cache';
+
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+let user=null,settings=null,logs={},viewWorkout=null;
+let cache=JSON.parse(localStorage.getItem(CACHE)||'null')||{settings:null,logs:{},dirty:{}};
+
+const $=x=>document.getElementById(x);
+const saveCache=()=>localStorage.setItem(CACHE,JSON.stringify({settings,logs,dirty:cache.dirty||{}}));
 const msg=(el,t,c='notice')=>el.innerHTML=t?`<div class="${c}">${t}</div>`:'';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const wkkey=w=>`w${w.week}d${w.day}`;
 const parseDate=s=>{let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
 const fmt=d=>d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-const dateFor=w=>{let d=parseDate(team.start_date);d.setDate(d.getDate()+(w.week-1)*7+w.day-1);return d};
-const todayW=()=>{let a=parseDate(team.start_date),t=new Date();t.setHours(0,0,0,0);let i=Math.max(0,Math.min(69,Math.floor((t-a)/86400000)));return PLAN[i]};
-function init(){if(!config)return false;try{client=supabase.createClient(config.url,config.key,{auth:{persistSession:true,autoRefreshToken:true}});return true}catch{return false}}
+const dateFor=w=>{let d=parseDate(settings.start_date);d.setDate(d.getDate()+(w.week-1)*7+w.day-1);return d};
+const todayW=()=>{let a=parseDate(settings.start_date),t=new Date();t.setHours(0,0,0,0);let i=Math.max(0,Math.min(69,Math.floor((t-a)/86400000)));return PLAN[i]};
+
 function badge(t,ok=true){$('syncBadge').textContent=t;$('syncBadge').className='pill '+(ok?'sync':'offline')}
-$('saveCfg').onclick=()=>{let url=$('cfgUrl').value.trim(),k=$('cfgKey').value.trim();if(!/^https:\/\/.+\.supabase\.co$/.test(url)||k.length<20)return msg($('cfgMsg'),'Check URL and key.','error');config={url,key:k};localStorage.setItem(CFG,JSON.stringify(config));init();$('authCard').classList.remove('hidden');check()};
-if(config){$('cfgUrl').value=config.url;$('cfgKey').value=config.key;if(init())$('authCard').classList.remove('hidden')}
-async function check(){if(!client)return;let r=await client.auth.getSession();if(r.data.session){user=r.data.session.user;await afterAuth()}}
-$('login').onclick=async()=>{let r=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(r.error)return msg($('authMsg'),r.error.message,'error');user=r.data.user;afterAuth()};
-$('signup').onclick=async()=>{let r=await client.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(r.error)return msg($('authMsg'),r.error.message,'error');if(r.data.session){user=r.data.user;afterAuth()}else msg($('authMsg'),'Account created. Confirm email, then sign in.','success')};
-async function afterAuth(){let r=await client.from('training_members').select('team_id,display_name').eq('user_id',user.id).limit(1);if(r.data?.length){await loadTeam(r.data[0].team_id);enterApp()}else{$('teamCard').classList.remove('hidden');$('newStart').value=new Date().toISOString().slice(0,10)}}
-$('createTeam').onclick=async()=>{let n=$('displayName').value.trim();if(!n)return msg($('teamMsg'),'Enter your display name.','error');let r=await client.rpc('create_training_team',{p_name:$('teamName').value.trim(),p_display_name:n,p_start_date:$('newStart').value});if(r.error)return msg($('teamMsg'),r.error.message,'error');await loadTeam(r.data[0].team_id);enterApp()};
-$('joinTeam').onclick=async()=>{let n=$('displayName').value.trim();if(!n)return msg($('teamMsg'),'Enter your display name.','error');let r=await client.rpc('join_training_team',{p_join_code:$('joinCode').value.trim(),p_display_name:n});if(r.error)return msg($('teamMsg'),r.error.message,'error');await loadTeam(r.data);enterApp()};
-async function loadTeam(id){badge('Syncing…');try{let [tr,mr,lr]=await Promise.all([client.from('training_teams').select('*').eq('id',id).single(),client.from('training_members').select('*').eq('team_id',id),client.from('workout_logs').select('*').eq('team_id',id)]);if(tr.error||mr.error||lr.error)throw(tr.error||mr.error||lr.error);team=tr.data;members=mr.data;logs={};lr.data.forEach(x=>logs[`${x.workout_key}|${x.user_id}`]=x);save();badge('Synced')}catch(e){console.error(e);if(cache.team){team=cache.team;members=cache.members||[];logs=cache.logs||{};badge('Offline cache',false)}else throw e}}
-function enterApp(){$('setup').classList.add('hidden');$('app').classList.remove('hidden');$('settingsTeam').value=team.name;$('settingsCode').value=team.join_code;$('settingsStart').value=team.start_date;$('settingsEmail').value=user.email;render();subscribe()}
-function ownLog(w){let k=`${wkkey(w)}|${user.id}`;if(!logs[k])logs[k]={team_id:team.id,workout_key:wkkey(w),user_id:user.id,completed:false,duration:'',weight_log:'',notes:'',photo_path:null};return logs[k]}
-function memberLog(w,m){return logs[`${wkkey(w)}|${m.user_id}`]||{completed:false,duration:'',weight_log:'',notes:'',photo_path:null}}
-async function persist(w){let l=ownLog(w),dk=`${wkkey(w)}|${user.id}`;cache.dirty[dk]=true;save();if(!navigator.onLine){badge('Offline • queued',false);return}badge('Saving…');let r=await client.from('workout_logs').upsert({...l,duration:l.duration||null,weight_log:l.weight_log||null,notes:l.notes||null,updated_at:new Date().toISOString()},{onConflict:'team_id,workout_key,user_id'});if(!r.error){delete cache.dirty[dk];save();badge('Synced')}else badge('Queued',false)}
-async function pushDirty(){for(let dk of Object.keys(cache.dirty||{})){let l=logs[dk];if(!l)continue;let r=await client.from('workout_logs').upsert({...l,duration:l.duration||null,weight_log:l.weight_log||null,notes:l.notes||null,updated_at:new Date().toISOString()},{onConflict:'team_id,workout_key,user_id'});if(!r.error)delete cache.dirty[dk]}save()}
-async function sync(){if(!navigator.onLine)return badge('Offline • queued',false);await pushDirty();await loadTeam(team.id);render()}
-function header(w){$('todayWeek').textContent=`Week ${w.week} • Day ${w.day} • ${fmt(dateFor(w))}`;[['todayTitle',w.title],['todayCategory',w.category],['todayLocation',w.location],['todayDistance',w.distance],['todayEstimate',w.estimate],['todayScheme',w.scheme],['todayEffort',w.effort]].forEach(([i,v])=>$(i).textContent=v)}
-async function photoUrl(path,img){let r=await client.storage.from('workout-photos').createSignedUrl(path,3600);if(!r.error){img.src=r.data.signedUrl;img.classList.remove('hidden')}}
-function renderLogs(w){let mount=$('todayLogs'),me=ownLog(w);mount.innerHTML='<div class="card"><h2>Workout logs</h2><div class="grid2" id="memberGrid"></div></div>';let grid=$('memberGrid');members.forEach(m=>{let l=memberLog(w,m),mine=m.user_id===user.id,d=document.createElement('div');d.className='member '+(mine?'me':'');d.innerHTML=`<div class="row space"><strong>${esc(m.display_name)}${mine?' (you)':''}</strong><span class="pill">${l.completed?'✓ Complete':'Pending'}</span></div>${l.duration?`<div class="small"><b>Duration:</b> ${esc(l.duration)}</div>`:''}${l.weight_log?`<div class="small"><b>Weights:</b> ${esc(l.weight_log)}</div>`:''}${l.notes?`<div class="small"><b>Notes:</b> ${esc(l.notes)}</div>`:''}<img class="photo hidden" alt="Workout photo">`;grid.appendChild(d);if(l.photo_path)photoUrl(l.photo_path,d.querySelector('img'))});
-let edit=document.createElement('div');edit.className='card';edit.innerHTML=`<h2>Your entry</h2><button id="completeBtn" class="${me.completed?'done':'secondary'}" style="width:100%">${me.completed?'✓ Completed':'Mark workout complete'}</button>${w.cardio?`<label>Total duration</label><input id="duration" value="${esc(me.duration||'')}" placeholder="e.g. 47:32">`:`<label>Weight recordings</label><textarea id="weights">${esc(me.weight_log||'')}</textarea>`}<label>Notes</label><textarea id="notes">${esc(me.notes||'')}</textarea><label>Workout image</label><input id="photo" type="file" accept="image/*"><img id="myPhoto" class="photo hidden" alt="Your workout photo">`;mount.appendChild(edit);$('completeBtn').onclick=()=>{me.completed=!me.completed;persist(w);renderLogs(w)};if(w.cardio)$('duration').onchange=e=>{me.duration=e.target.value;persist(w)};else $('weights').onchange=e=>{me.weight_log=e.target.value;persist(w)};$('notes').onchange=e=>{me.notes=e.target.value;persist(w)};$('photo').onchange=e=>e.target.files[0]&&uploadPhoto(w,e.target.files[0]);if(me.photo_path)photoUrl(me.photo_path,$('myPhoto'))}
-async function uploadPhoto(w,file){if(file.size>8*1024*1024)return alert('Please choose an image under 8 MB.');let ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase(),path=`${team.id}/${user.id}/${wkkey(w)}.${ext}`;badge('Uploading…');let r=await client.storage.from('workout-photos').upload(path,file,{upsert:true,contentType:file.type});if(r.error)return alert(r.error.message);ownLog(w).photo_path=path;await persist(w);renderLogs(w)}
-function renderToday(w=todayW()){viewWorkout=w;header(w);renderLogs(w)}
-function renderPlan(){let mount=$('planList');mount.innerHTML='';for(let n=1;n<=10;n++){let h=document.createElement('h2');h.textContent=`Week ${n}`;h.style.marginTop='22px';mount.appendChild(h);PLAN.filter(w=>w.week===n).forEach(w=>{let all=members.length&&members.every(m=>memberLog(w,m).completed),one=members.some(m=>memberLog(w,m).completed),c=document.createElement('div');c.className='card day '+(all?'complete':'');c.innerHTML=`<div class="row space"><div><span class="pill">${fmt(dateFor(w))}</span><h3>${esc(w.title)}</h3><div class="small muted">${esc(w.location)} • ${esc(w.distance)} • ${esc(w.estimate)}</div></div><span class="pill">${all?'Team complete':one?'In progress':'Pending'}</span></div><div class="sub">${esc(w.scheme)}</div>`;c.onclick=()=>{document.querySelector('[data-tab="today"]').click();renderToday(w)};mount.appendChild(c)})}let done=PLAN.filter(w=>members.length&&members.every(m=>memberLog(w,m).completed)).length;$('progressText').textContent=`${done} of 70 workouts completed by everyone`;$('progressBar').style.width=`${done/70*100}%`}
-function renderHistory(){let mount=$('historyList');mount.innerHTML='';let used=PLAN.filter(w=>members.some(m=>{let l=memberLog(w,m);return l.completed||l.duration||l.weight_log||l.notes||l.photo_path})).reverse();if(!used.length){mount.innerHTML='<div class="card muted">No history yet.</div>';return}used.forEach(w=>{let c=document.createElement('div');c.className='card';c.innerHTML=`<div class="row space"><h3>${esc(w.title)}</h3><span class="pill">W${w.week}D${w.day}</span></div><div class="small muted">${fmt(dateFor(w))}</div>`;members.forEach(m=>{let l=memberLog(w,m),p=document.createElement('div');p.className='small';p.style.marginTop='7px';p.innerHTML=`<b>${esc(m.display_name)}:</b> ${l.completed?'✓ Complete':'—'}${l.duration?' • '+esc(l.duration):''}${l.weight_log?' • '+esc(l.weight_log):''}`;c.appendChild(p)});mount.appendChild(c)})}
-function render(){renderToday(viewWorkout||todayW());renderPlan();renderHistory();save()}
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');['today','plan','history','settings'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='plan')renderPlan();if(b.dataset.tab==='history')renderHistory()});
-$('settingsStart').onchange=async e=>{let r=await client.from('training_teams').update({start_date:e.target.value,updated_at:new Date().toISOString()}).eq('id',team.id);if(!r.error){team.start_date=e.target.value;save();render()}};
-$('syncNow').onclick=sync;$('signOut').onclick=async()=>{await client.auth.signOut();location.reload()};
-$('exportAll').onclick=()=>{let data={version:3,exported_at:new Date().toISOString(),team,members,workout_logs:Object.values(logs),plan:PLAN};let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='10k-tracker-v3-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-function subscribe(){client.channel('v3-'+team.id).on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`team_id=eq.${team.id}`},()=>sync()).on('postgres_changes',{event:'UPDATE',schema:'public',table:'training_teams',filter:`id=eq.${team.id}`},()=>sync()).subscribe()}
-window.addEventListener('online',sync);window.addEventListener('offline',()=>badge('Offline • queued',false));if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});check();
-</script></body></html>
+
+$('login').onclick=async()=>{
+  let r=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+  if(r.error)return msg($('authMsg'),r.error.message,'error');
+  user=r.data.user;await afterAuth();
+};
+
+$('signup').onclick=async()=>{
+  let r=await client.auth.signUp({email:$('email').value.trim(),password:$('password').value});
+  if(r.error)return msg($('authMsg'),r.error.message,'error');
+  if(r.data.session){user=r.data.user;await afterAuth()}
+  else msg($('authMsg'),'Account created. Confirm your email, then sign in.','success');
+};
+
+async function checkSession(){
+  let r=await client.auth.getSession();
+  if(r.data.session){user=r.data.session.user;await afterAuth()}
+}
+
+async function afterAuth(){
+  let r=await client.from('user_settings').select('*').eq('user_id',user.id).maybeSingle();
+  if(r.error)return msg($('authMsg'),r.error.message,'error');
+  if(!r.data){
+    $('profileCard').classList.remove('hidden');
+    $('startDateCreate').value=new Date().toISOString().slice(0,10);
+    return;
+  }
+  settings=r.data;
+  await loadLogs();
+  enterApp();
+}
+
+$('finishSetup').onclick=async()=>{
+  let name=$('displayName').value.trim();
+  let start=$('startDateCreate').value;
+  if(!name||!start)return msg($('profileMsg'),'Enter your name and start date.','error');
+  let r=await client.from('user_settings').insert({user_id:user.id,display_name:name,start_date:start});
+  if(r.error)return msg($('profileMsg'),r.error.message,'error');
+  settings=r.data?.[0]||{user_id:user.id,display_name:name,start_date:start};
+  await loadLogs();
+  enterApp();
+};
+
+async function loadLogs(){
+  badge('Syncing…');
+  try{
+    let r=await client.from('workout_logs').select('*').eq('user_id',user.id);
+    if(r.error)throw r.error;
+    logs={};
+    (r.data||[]).forEach(x=>logs[x.workout_key]=x);
+    saveCache();badge('Synced');
+  }catch(e){
+    console.error(e);
+    settings=cache.settings||settings;
+    logs=cache.logs||{};
+    badge('Offline cache',false);
+  }
+}
+
+function enterApp(){
+  $('authGate').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('settingsName').value=settings.display_name;
+  $('settingsStart').value=settings.start_date;
+  $('settingsEmail').value=user.email;
+  $('greeting').textContent=`${settings.display_name}'s 10K Tracker`;
+  render();
+  subscribe();
+}
+
+function ownLog(w){
+  let k=wkkey(w);
+  if(!logs[k])logs[k]={user_id:user.id,workout_key:k,completed:false,duration:'',weight_log:'',notes:'',photo_path:null};
+  return logs[k];
+}
+
+async function persist(w){
+  let l=ownLog(w),k=wkkey(w);
+  cache.dirty[k]=true;saveCache();
+  if(!navigator.onLine){badge('Offline • queued',false);return}
+  badge('Saving…');
+  let r=await client.from('workout_logs').upsert({
+    user_id:user.id,workout_key:k,completed:!!l.completed,
+    duration:l.duration||null,weight_log:l.weight_log||null,
+    notes:l.notes||null,photo_path:l.photo_path||null,
+    updated_at:new Date().toISOString()
+  },{onConflict:'user_id,workout_key'});
+  if(!r.error){delete cache.dirty[k];saveCache();badge('Synced')}
+  else badge('Queued',false);
+}
+
+async function pushDirty(){
+  for(let k of Object.keys(cache.dirty||{})){
+    let l=logs[k];if(!l)continue;
+    let r=await client.from('workout_logs').upsert({...l,updated_at:new Date().toISOString()},{onConflict:'user_id,workout_key'});
+    if(!r.error)delete cache.dirty[k];
+  }
+  saveCache();
+}
+
+async function sync(){
+  if(!navigator.onLine)return badge('Offline • queued',false);
+  await pushDirty();await loadLogs();render();
+}
+
+function header(w){
+  $('todayWeek').textContent=`Week ${w.week} • Day ${w.day} • ${fmt(dateFor(w))}`;
+  [['todayTitle',w.title],['todayCategory',w.category],['todayLocation',w.location],['todayDistance',w.distance],['todayEstimate',w.estimate],['todayScheme',w.scheme],['todayEffort',w.effort]]
+  .forEach(([i,v])=>$(i).textContent=v);
+}
+
+async function photoUrl(path,img){
+  let r=await client.storage.from('workout-photos').createSignedUrl(path,3600);
+  if(!r.error){img.src=r.data.signedUrl;img.classList.remove('hidden')}
+}
+
+function renderLog(w){
+  let l=ownLog(w),mount=$('todayLog');
+  mount.innerHTML=`<div class="card">
+    <h2>Your workout entry</h2>
+    <button id="completeBtn" class="${l.completed?'done':'secondary'}" style="width:100%">${l.completed?'✓ Completed':'Mark workout complete'}</button>
+    ${w.cardio?`<label>Total duration</label><input id="duration" value="${esc(l.duration||'')}" placeholder="e.g. 47:32">`:`<label>Weight recordings</label><textarea id="weights" placeholder="Exercise / weight / reps">${esc(l.weight_log||'')}</textarea>`}
+    <label>Notes</label><textarea id="notes" placeholder="How did it feel?">${esc(l.notes||'')}</textarea>
+    <label>Workout image</label><input id="photo" type="file" accept="image/*">
+    <img id="myPhoto" class="photo hidden" alt="Workout photo">
+  </div>`;
+  $('completeBtn').onclick=()=>{l.completed=!l.completed;persist(w);renderLog(w)};
+  if(w.cardio)$('duration').onchange=e=>{l.duration=e.target.value;persist(w)};
+  else $('weights').onchange=e=>{l.weight_log=e.target.value;persist(w)};
+  $('notes').onchange=e=>{l.notes=e.target.value;persist(w)};
+  $('photo').onchange=e=>e.target.files[0]&&uploadPhoto(w,e.target.files[0]);
+  if(l.photo_path)photoUrl(l.photo_path,$('myPhoto'));
+}
+
+async function uploadPhoto(w,file){
+  if(file.size>8*1024*1024)return alert('Please choose an image under 8 MB.');
+  let ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase();
+  let path=`${user.id}/${wkkey(w)}.${ext}`;
+  badge('Uploading…');
+  let r=await client.storage.from('workout-photos').upload(path,file,{upsert:true,contentType:file.type});
+  if(r.error)return alert(r.error.message);
+  ownLog(w).photo_path=path;
+  await persist(w);renderLog(w);
+}
+
+function renderToday(w=todayW()){viewWorkout=w;header(w);renderLog(w)}
+
+function renderPlan(){
+  let mount=$('planList');mount.innerHTML='';
+  for(let n=1;n<=10;n++){
+    let h=document.createElement('h2');h.textContent=`Week ${n}`;h.style.marginTop='22px';mount.appendChild(h);
+    PLAN.filter(w=>w.week===n).forEach(w=>{
+      let l=ownLog(w),c=document.createElement('div');
+      c.className='card day '+(l.completed?'complete':'');
+      c.innerHTML=`<div class="row space"><div><span class="pill">${fmt(dateFor(w))}</span><h3>${esc(w.title)}</h3><div class="small muted">${esc(w.location)} • ${esc(w.distance)} • ${esc(w.estimate)}</div></div><span class="pill">${l.completed?'Complete':'Pending'}</span></div><div class="sub">${esc(w.scheme)}</div>`;
+      c.onclick=()=>{document.querySelector('[data-tab="today"]').click();renderToday(w);window.scrollTo({top:0,behavior:'smooth'})};
+      mount.appendChild(c);
+    });
+  }
+  let done=PLAN.filter(w=>ownLog(w).completed).length;
+  $('progressText').textContent=`${done} of 70 workouts completed`;
+  $('progressBar').style.width=`${done/70*100}%`;
+}
+
+function renderHistory(){
+  let mount=$('historyList');mount.innerHTML='';
+  let used=PLAN.filter(w=>{let l=ownLog(w);return l.completed||l.duration||l.weight_log||l.notes||l.photo_path}).reverse();
+  if(!used.length){mount.innerHTML='<div class="card muted">No history yet.</div>';return}
+  used.forEach(w=>{
+    let l=ownLog(w),c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`<div class="row space"><h3>${esc(w.title)}</h3><span class="pill">W${w.week}D${w.day}</span></div>
+    <div class="small muted">${fmt(dateFor(w))}</div>
+    <div class="small" style="margin-top:7px"><b>Status:</b> ${l.completed?'✓ Complete':'Not complete'}</div>
+    ${l.duration?`<div class="small"><b>Duration:</b> ${esc(l.duration)}</div>`:''}
+    ${l.weight_log?`<div class="small"><b>Weights:</b> ${esc(l.weight_log)}</div>`:''}
+    ${l.notes?`<div class="small"><b>Notes:</b> ${esc(l.notes)}</div>`:''}
+    <img class="photo hidden" alt="Workout photo">`;
+    mount.appendChild(c);
+    if(l.photo_path)photoUrl(l.photo_path,c.querySelector('img'));
+  });
+}
+
+function render(){renderToday(viewWorkout||todayW());renderPlan();renderHistory();saveCache()}
+
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  ['today','plan','history','settings'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==b.dataset.tab));
+  if(b.dataset.tab==='plan')renderPlan();
+  if(b.dataset.tab==='history')renderHistory();
+});
+
+async function updateSettings(){
+  let name=$('settingsName').value.trim(),start=$('settingsStart').value;
+  if(!name||!start)return;
+  let r=await client.from('user_settings').update({display_name:name,start_date:start,updated_at:new Date().toISOString()}).eq('user_id',user.id);
+  if(!r.error){settings.display_name=name;settings.start_date=start;$('greeting').textContent=`${name}'s 10K Tracker`;saveCache();render()}
+}
+$('settingsName').onchange=updateSettings;
+$('settingsStart').onchange=updateSettings;
+$('syncNow').onclick=sync;
+$('signOut').onclick=async()=>{await client.auth.signOut();location.reload()};
+$('exportAll').onclick=()=>{
+  let data={version:4,exported_at:new Date().toISOString(),settings,workout_logs:Object.values(logs),plan:PLAN};
+  let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='10k-tracker-v4-full-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+
+function subscribe(){
+  client.channel('v4-'+user.id)
+  .on('postgres_changes',{event:'*',schema:'public',table:'workout_logs',filter:`user_id=eq.${user.id}`},()=>sync())
+  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'user_settings',filter:`user_id=eq.${user.id}`},()=>afterAuth())
+  .subscribe();
+}
+
+window.addEventListener('online',sync);
+window.addEventListener('offline',()=>badge('Offline • queued',false));
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+checkSession();
+</script>
+</body></html>

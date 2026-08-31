@@ -1,22 +1,32 @@
-# 10K Workout Tracker V3
+# 10K Workout Tracker V4
 
-V3 adds separate Jonathan/Nicole accounts, a shared training team, durable Supabase cloud storage, private photo storage, offline caching/queued writes, realtime synchronization, and a full JSON backup export.
+V4 removes all Supabase setup fields from the app and removes teams entirely.
 
-Swimming has been completely removed from the 10-week plan. Those days were replaced with easy cycling, walking, mobility, and core work.
+## User experience
+- Open app
+- Create account or sign in
+- Enter your name and plan start date once
+- Track workouts
 
-## Setup
-1. Run SUPABASE_SETUP_V3.sql in the Supabase SQL Editor.
-2. Replace your GitHub Pages repository files with the V3 files.
-3. Open the PWA and enter the Project URL plus publishable/anon key.
-4. Jonathan creates his own account and then creates the training team.
-5. Copy the 8-character join code from Settings.
-6. Nicole creates her own account and joins with that code.
-7. Each person now records only their own completion/results, while both can see the team's records.
+Each account has its own:
+- plan start date
+- workout completion
+- duration logs
+- weight logs
+- notes
+- workout photos
+- history
+
+The Supabase Project URL and publishable browser key are embedded in the app.
+
+## Upgrade steps
+1. Run `SUPABASE_SETUP_V4.sql` in your existing Supabase project's SQL Editor.
+2. Replace the files in your GitHub Pages repository with the V4 files.
+3. Commit changes to `main`.
+4. Reload the GitHub Pages site / PWA.
+5. Create an account.
 
 ## Data durability
-Supabase Postgres is the main source of truth. Each phone also has a local cache and queues workout changes made while offline. Use Export Full Backup periodically to download a JSON copy of team settings, members, all workout logs, and the complete plan.
+Supabase is the primary cloud store. The app also keeps a local offline cache and queues offline workout changes. Use Export Full Backup periodically for a JSON copy of your settings, logs, and training plan.
 
-Workout images remain in the private Supabase Storage bucket; the backup contains their storage paths, not duplicate image bytes.
-
-## Security
-The SQL enables Row Level Security. Team members can read shared team information. Each authenticated user can write only their own workout log rows. Photos are private and scoped by team ID and user ID. Never put a service-role key in the browser app.
+Photos are stored privately in Supabase Storage and the JSON backup contains their storage paths rather than duplicate image files.
